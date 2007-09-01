@@ -1,5 +1,4 @@
-%define base_name    xen
-%define name        %{base_name}-uptodate
+%define name            xen
 %define kernel_version  2.6.18
 
 Name:       %{name}
@@ -8,12 +7,12 @@ Release:    %mkrel 6
 Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
 License:    GPL
-Source0:    %{base_name}-%{version}-src.tgz
+Source0:    %{name}-%{version}-src.tgz
 Source1:    bash-completion
 Source2:    linux-%{kernel_version}.tar.bz2
-Patch0:     xen-uptodate-3.1-fix-default-interface.patch
-Patch1:     xen-uptodate-3.1.0-bnx2-1.4.51b.patch
-Patch2:     xen-uptodate-3.1.0-memcmp.patch
+Patch0:     xen-3.1-fix-default-interface.patch
+Patch1:     xen-3.1.0-bnx2-1.4.51b.patch
+Patch2:     xen-3.1.0-memcmp.patch
 Requires:   python-twisted-core
 Requires:   python
 Requires:   module-init-tools
@@ -62,7 +61,7 @@ Group:      System/Kernel and hardware
 XEN documentation.
 
 %prep
-%setup -q -n %{base_name}-%{version}-src
+%setup -q -n %{name}-%{version}-src
 %patch0 -p 1
 %patch1 -p 1
 %patch2 -p 0
