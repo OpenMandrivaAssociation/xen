@@ -30,6 +30,7 @@ BuildRequires:	libpython-devel >= 2.4
 BuildRequires:	zlib-devel
 BuildRequires:  tetex-latex
 BuildRequires:  texi2html
+Obsoletes:      xen-uptodate
 BuildRoot:      %{_tmppath}/%{name}-%{version}
 
 %description 
@@ -38,6 +39,7 @@ The basic tools for managing XEN virtual machines.
 %package -n kernel-xen
 Summary:    XEN kernel
 Group:      System/Kernel and hardware
+Obsoletes:  kernel-xen-uptodate
 
 %description -n kernel-xen
 XEN kernel.
@@ -46,6 +48,7 @@ XEN kernel.
 Summary:    XEN kernel sources
 Group:      System/Kernel and hardware
 Requires:   kernel-xen = %{version}
+Obsoletes:  kernel-xen-uptodate-devel
 
 %description -n kernel-xen-devel
 XEN kernel sources.
@@ -53,6 +56,7 @@ XEN kernel sources.
 %package doc
 Summary:    XEN documentation
 Group:      System/Kernel and hardware
+Obsoletes:  xen-uptodate-doc
 
 %description doc
 XEN documentation.
