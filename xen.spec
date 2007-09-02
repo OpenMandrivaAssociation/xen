@@ -3,7 +3,7 @@
 
 Name:       %{name}
 Version:    3.1.0
-Release:    %mkrel 6
+Release:    %mkrel 1
 Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
 License:    GPL
@@ -28,29 +28,26 @@ BuildRequires:  libext2fs-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	libpython-devel >= 2.4
 BuildRequires:	zlib-devel
-BuildRequires:  libvncserver-devel
 BuildRequires:  tetex-latex
 BuildRequires:  texi2html
-Provides:       xen = %{version}
 BuildRoot:      %{_tmppath}/%{name}-%{version}
 
 %description 
 The basic tools for managing XEN virtual machines.
 
-%package -n kernel-xen-uptodate
+%package -n kernel-xen
 Summary:    XEN kernel
 Group:      System/Kernel and hardware
-Provides:   kernel-xen = %{version}
 
-%description -n kernel-xen-uptodate
+%description -n kernel-xen
 XEN kernel.
 
-%package -n kernel-xen-uptodate-devel
+%package -n kernel-xen-devel
 Summary:    XEN kernel sources
 Group:      System/Kernel and hardware
-Requires:   kernel-xen-uptodate = %{version}
+Requires:   kernel-xen = %{version}
 
-%description -n kernel-xen-uptodate-devel
+%description -n kernel-xen-devel
 XEN kernel sources.
 
 %package doc
@@ -139,16 +136,16 @@ install -d -m 755 %{buildroot}%{_localstatedir}/xend/{domains,state,storage}
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
-%post -n kernel-xen-uptodate
+%post -n kernel-xen
 /sbin/installkernel -L %{kernel_version}-xen
 
-%post -n kernel-xen-uptodate-devel
+%post -n kernel-xen-devel
 if [ -d /lib/modules/%{kernel_version}-xen ]; then
     ln -sf /usr/src/linux-%{kernel_version}-xen /lib/modules/%{kernel_version}-xen/build
     ln -sf /usr/src/linux-%{kernel_version}-xen /lib/modules/%{kernel_version}-xen/source
 fi
 
-%postun -n kernel-xen-uptodate-devel
+%postun -n kernel-xen-devel
 if [ -L /lib/modules/%{kernel_version}-xen/build ]; then
     rm -f /lib/modules/%{kernel_version}-xen/build
 fi
@@ -228,12 +225,12 @@ rm -rf %{buildroot}
 %{_bindir}/xen-detect
 %{_sysconfdir}/bash_completion.d/xen
 
-%files -n kernel-xen-uptodate
+%files -n kernel-xen
 %defattr(-,root,root)
 /boot/*-xen
 /lib/modules/%{kernel_version}-xen
 
-%files -n kernel-xen-uptodate-devel
+%files -n kernel-xen-devel
 %defattr(-,root,root)
 %{_prefix}/src/linux-%{kernel_version}-xen
 
