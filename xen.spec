@@ -3,7 +3,7 @@
 
 Name:       %{name}
 Version:    3.1.0
-Release:    %mkrel 1
+Release:    %mkrel 2
 Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
 License:    GPL
@@ -39,6 +39,7 @@ The basic tools for managing XEN virtual machines.
 %package -n kernel-xen
 Summary:    XEN kernel
 Group:      System/Kernel and hardware
+Requires(post):	xen
 Obsoletes:  kernel-xen-uptodate
 
 %description -n kernel-xen
