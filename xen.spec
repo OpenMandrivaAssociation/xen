@@ -35,7 +35,7 @@ BuildRequires:	ncurses-devel
 BuildRequires:	libpython-devel >= 2.4
 BuildRequires:	zlib-devel
 BuildRequires:  tetex-latex
-BuildRequires:  texi2html
+BuildRequires:  tetex-texi2html
 Obsoletes:      xen-uptodate
 BuildRoot:      %{_tmppath}/%{name}-%{version}
 
