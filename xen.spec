@@ -3,7 +3,7 @@
 
 Name:       %{name}
 Version:    3.1.0
-Release:    %mkrel 3
+Release:    %mkrel 4
 Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
 License:    GPL
