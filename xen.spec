@@ -13,6 +13,7 @@ Source2:    linux-%{kernel_version}.tar.bz2
 Patch0:     xen-3.1-fix-default-interface.patch
 Patch1:     xen-3.1.0-bnx2-1.4.51b.patch
 Patch2:     xen-3.1.0-memcmp.patch
+Patch3:     xen-3.1.0-squashfs.patch
 # CVE-2007-1321
 Patch401:   xen-qemu-ne2000-CVE-2007-1321.patch
 # CVE-2007-4993
@@ -71,6 +72,7 @@ XEN documentation.
 %patch0 -p 1
 %patch1 -p 1
 %patch2 -p 0
+%patch3 -p 1
 
 %patch401 -p 1
 %patch402 -p 1
