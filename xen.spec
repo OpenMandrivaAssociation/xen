@@ -44,6 +44,7 @@ The basic tools for managing XEN virtual machines.
 %package -n kernel-xen
 Summary:    XEN kernel
 Group:      System/Kernel and hardware
+Provides:   kernel = %{kernel_version}
 Requires(post):	xen
 Obsoletes:  kernel-xen-uptodate
 
@@ -54,6 +55,7 @@ XEN kernel.
 Summary:    XEN kernel sources
 Group:      System/Kernel and hardware
 Requires:   kernel-xen = %{version}
+Provides:   kernel-devel = %{kernel_version}
 Obsoletes:  kernel-xen-uptodate-devel
 
 %description -n kernel-xen-devel
