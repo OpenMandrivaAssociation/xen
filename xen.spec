@@ -18,6 +18,7 @@ Patch3:     xen-3.1.0-squashfs.patch
 Patch401:   xen-qemu-ne2000-CVE-2007-1321.patch
 # CVE-2007-4993
 Patch402:   pygrub-dont-exec.patch
+Patch403:   xen-3.0.3-CVE-2007-3919.patch
 Requires:   python-twisted-core
 Requires:   python
 Requires:   module-init-tools
@@ -78,6 +79,7 @@ XEN documentation.
 
 %patch401 -p 1
 %patch402 -p 1
+%patch403 -p1
 
 %build
 
