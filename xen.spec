@@ -1,5 +1,8 @@
 %define name            xen
 %define kernel_version  2.6.18
+%define major           3.0
+%define libname         %mklibname %{name} %{major}
+%define develname	    %mklibname %{name} -d
 
 Name:       %{name}
 Version:    3.1.0
@@ -69,6 +72,24 @@ Obsoletes:  xen-uptodate-doc
 
 %description doc
 XEN documentation.
+
+%package -n %{libname}
+Summary:    Libraries for %{name}
+Group:      System/Libraries
+
+%description -n	%{libname}
+This package contains the libraries needed to run programs dynamically
+linked with Xen libraries.
+
+%package -n %{develname}
+Summary:    Static libraries and header files for %{name}
+Group:      Development/C
+Requires:	%{libname} = %{version}-%{release}
+Provides:	%{name}-devel = %{version}-%{release}
+
+%description -n	%{develname}
+This package contains the static development libraries and headers needed
+to compile applications linked with Xen libraries.
 
 %prep
 %setup -q -n %{name}-%{version}-src
@@ -201,18 +222,11 @@ rm -rf %{buildroot}
 %{_libdir}/python/pygrub-0.3-py2.5.egg-info
 %{_libdir}/python/xen-3.0-py2.5.egg-info
 %endif
-%{_libdir}/libxenstore*
-%{_libdir}/libxenctrl*
-%{_libdir}/libxenguest*
-%{_libdir}/libblktap*
-%{_libdir}/libfsimage*
 %{_datadir}/xen
 %{_localstatedir}/xend
 %{_localstatedir}/xenstored
  /var/run/xenstored
 /boot/xen*
-%{_includedir}/xen
-%{_includedir}/*.h
 %{_sysconfdir}/init.d/xend
 %{_sysconfdir}/init.d/xendomains
 %{_sbindir}/xenstored
@@ -257,3 +271,14 @@ rm -rf %{buildroot}
 %{_docdir}/%{name}/*
 %exclude %{_docdir}/%{name}/README
 %doc docs/ps/* docs/pdf/* tools/ioemu/*.html
+
+%files -n %{libname}
+%defattr(-,root,root)
+%{_libdir}/*.so.*
+
+%files -n %{develname}
+%defattr(-,root,root)
+%{_includedir}/xen
+%{_includedir}/*.h
+%{_libdir}/*.so
+%{_libdir}/*.a
