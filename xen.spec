@@ -1,12 +1,15 @@
 %define name            xen
-%define kernel_version  2.6.18
+%define rel             4
+%define kernel_version          2.6.18
+%define kernel_extra_version    %{rel}mdv    
+%define kernel_string           %{kernel_version}-xen-%{kernel_extra_version}
 %define major           3.0
 %define libname         %mklibname %{name} %{major}
 %define develname	    %mklibname %{name} -d
 
 Name:       %{name}
 Version:    3.1.0
-Release:    %mkrel 4
+Release:    %mkrel %rel
 Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
 License:    GPL
@@ -45,24 +48,24 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}
 %description 
 The basic tools for managing XEN virtual machines.
 
-%package -n kernel-xen
+%package -n kernel-xen-%{kernel_extra_version}
 Summary:    XEN kernel
 Group:      System/Kernel and hardware
 Provides:   kernel = %{kernel_version}
 Requires(post):	xen
 Obsoletes:  kernel-xen-uptodate
 
-%description -n kernel-xen
+%description -n kernel-xen-%{kernel_extra_version}
 XEN kernel.
 
-%package -n kernel-xen-devel
+%package -n kernel-xen-devel-%{kernel_extra_version}
 Summary:    XEN kernel sources
 Group:      System/Kernel and hardware
 Requires:   kernel-xen = %{version}
 Provides:   kernel-devel = %{kernel_version}
 Obsoletes:  kernel-xen-uptodate-devel
 
-%description -n kernel-xen-devel
+%description -n kernel-xen-devel-%{kernel_extra_version}
 XEN kernel sources.
 
 %package doc
@@ -108,7 +111,8 @@ to compile applications linked with Xen libraries.
 export CFLAGS="$CFLAGS -fno-strict-aliasing"
 export HOSTCC="$HOSTCC -fno-strict-aliasing"
 export LINUX_SRC_PATH=$RPM_SOURCE_DIR
-export pae=y
+export EXTRAVERSION="xen-%{kernel_extra_version}"
+export pae=y 
 %make kernels
 %make -C tools
 %make -C xen
@@ -118,8 +122,9 @@ export pae=y
 %install
 rm -rf %{buildroot}
 export DONT_GPRINTIFY=1
-export pae=y
 export DESTDIR=%{buildroot}
+export EXTRAVERSION="xen-%{kernel_extra_version}"
+export pae=y
 make linux-2.6-xen-install
 make -C tools install
 make -C xen install
@@ -129,10 +134,10 @@ rm -f %{buildroot}/lib/modules/*/{build,source}
 
 # install kernel sources
 install -d -m 755 %{buildroot}%{_prefix}/src
-cp -r -L linux-2.6.18-xen %{buildroot}%{_prefix}/src/linux-%{kernel_version}-xen
+cp -r -L linux-2.6.18-xen %{buildroot}%{_prefix}/src/linux-%{kernel_string}
 
 # clean sources from useless source files
-pushd %{buildroot}%{_prefix}/src/linux-%{kernel_version}-xen
+pushd %{buildroot}%{_prefix}/src/linux-%{kernel_string}
 for i in alpha arm arm26 avr32 blackfin cris frv h8300 ia64 mips m32r m68k m68knommu parisc powerpc ppc s390 sh sh64 v850 xtensa; do
 	rm -rf arch/$i
 	rm -rf include/asm-$i
@@ -175,21 +180,21 @@ install -d -m 755 %{buildroot}%{_localstatedir}/xend/{domains,state,storage}
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
-%post -n kernel-xen
-/sbin/installkernel -L %{kernel_version}-xen
+%post -n kernel-xen-%{kernel_extra_version}
+/sbin/installkernel -L %{kernel_string}
 
-%post -n kernel-xen-devel
-if [ -d /lib/modules/%{kernel_version}-xen ]; then
-    ln -sf /usr/src/linux-%{kernel_version}-xen /lib/modules/%{kernel_version}-xen/build
-    ln -sf /usr/src/linux-%{kernel_version}-xen /lib/modules/%{kernel_version}-xen/source
+%post -n kernel-xen-devel-%{kernel_extra_version}
+if [ -d /lib/modules/%{kernel_string} ]; then
+    ln -sf /usr/src/linux-%{kernel_string} /lib/modules/%{kernel_string}/build
+    ln -sf /usr/src/linux-%{kernel_string} /lib/modules/%{kernel_string}/source
 fi
 
-%postun -n kernel-xen-devel
-if [ -L /lib/modules/%{kernel_version}-xen/build ]; then
-    rm -f /lib/modules/%{kernel_version}-xen/build
+%postun -n kernel-xen-devel-%{kernel_extra_version}
+if [ -L /lib/modules/%{kernel_string}/build ]; then
+    rm -f /lib/modules/%{kernel_string}/build
 fi
-if [ -L /lib/modules/%{kernel_version}-xen/source ]; then
-    rm -f /lib/modules/%{kernel_version}-xen/source
+if [ -L /lib/modules/%{kernel_string}-xen/source ]; then
+    rm -f /lib/modules/%{kernel_string}-xen/source
 fi
 
 %clean
@@ -257,14 +262,14 @@ rm -rf %{buildroot}
 %{_bindir}/xen-detect
 %{_sysconfdir}/bash_completion.d/xen
 
-%files -n kernel-xen
+%files -n kernel-xen-%{kernel_extra_version}
 %defattr(-,root,root)
-/boot/*-xen
-/lib/modules/%{kernel_version}-xen
+/boot/*-xen-%{kernel_extra_version}
+/lib/modules/%{kernel_string}
 
-%files -n kernel-xen-devel
+%files -n kernel-xen-devel-%{kernel_extra_version}
 %defattr(-,root,root)
-%{_prefix}/src/linux-%{kernel_version}-xen
+%{_prefix}/src/linux-%{kernel_string}
 
 %files doc
 %defattr(-,root,root)
