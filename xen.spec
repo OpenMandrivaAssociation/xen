@@ -199,7 +199,7 @@ install -d -m 755 %{buildroot}%{_localstatedir}/xend/{domains,state,storage}
 %postun -p /sbin/ldconfig
 
 %post -n kernel-xen-%{kernel_extra_version}
-/sbin/installkernel -L %{kernel_string}
+/sbin/installkernel %{kernel_string}
 
 %post -n kernel-xen-devel-%{kernel_extra_version}
 if [ -d /lib/modules/%{kernel_string} ]; then
