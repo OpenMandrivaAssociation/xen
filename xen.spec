@@ -135,7 +135,20 @@ make -C xen install
 rm -f %{buildroot}/boot/vmlinuz-2.6-xen-%{kernel_extra_version}
 
 # drop dangling symlinks
-rm -f %{buildroot}/lib/modules/*/{build,source}
+rm -f %{buildroot}/lib/modules/%{kernel_string}/{build,source}
+
+# compress modules
+find %{buildroot}/lib/modules/%{kernel_string} -name "*.ko" | xargs gzip -9
+/sbin/depmod -u -ae -b %{buildroot} -r \
+    -F %{buildroot}/boot/System.map-%{kernel_string} \
+    %{kernel_string}
+
+# create modules description
+pushd %{buildroot}/lib/modules/%{kernel_string}
+find . -name "*.ko.gz" | xargs /sbin/modinfo | \
+    perl -lne 'print "$name\t$1" if $name && /^description:\s*(.*)/; $name = $1 if m!^filename:\s*(.*)\.k?o!; $name =~ s!.*/!!' \
+    > modules.description
+popd
 
 # install kernel sources
 install -d -m 755 %{buildroot}%{_prefix}/src
@@ -198,8 +211,8 @@ fi
 if [ -L /lib/modules/%{kernel_string}/build ]; then
     rm -f /lib/modules/%{kernel_string}/build
 fi
-if [ -L /lib/modules/%{kernel_string}-xen/source ]; then
-    rm -f /lib/modules/%{kernel_string}-xen/source
+if [ -L /lib/modules/%{kernel_string}/source ]; then
+    rm -f /lib/modules/%{kernel_string}/source
 fi
 
 %clean
