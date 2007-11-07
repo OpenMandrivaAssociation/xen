@@ -1,5 +1,5 @@
 %define name            xen
-%define rel             4
+%define rel             5
 %define kernel_version          2.6.18
 %define kernel_extra_version    %{rel}mdv    
 %define kernel_string           %{kernel_version}-xen-%{kernel_extra_version}
@@ -20,6 +20,7 @@ Patch0:     xen-3.1-fix-default-interface.patch
 Patch1:     xen-3.1.0-bnx2-1.4.51b.patch
 Patch2:     xen-3.1.0-memcmp.patch
 Patch3:     xen-3.1.0-squashfs.patch
+Patch4:     xen-3.1.0-use-same-arch-default-config.patch
 # CVE-2007-1321
 Patch401:   xen-qemu-ne2000-CVE-2007-1321.patch
 # CVE-2007-4993
@@ -100,6 +101,7 @@ to compile applications linked with Xen libraries.
 %patch1 -p 1
 %patch2 -p 0
 %patch3 -p 1
+%patch4 -p 1
 
 %patch401 -p 1
 %patch402 -p 1
