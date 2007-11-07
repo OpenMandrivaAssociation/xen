@@ -131,6 +131,9 @@ make linux-2.6-xen-install
 make -C tools install
 make -C xen install
 
+# remove additional kernel symlink
+rm -f %{buildroot}/boot/vmlinuz-2.6-xen-%{kernel_extra_version}
+
 # drop dangling symlinks
 rm -f %{buildroot}/lib/modules/*/{build,source}
 
