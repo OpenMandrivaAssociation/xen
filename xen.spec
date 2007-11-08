@@ -38,6 +38,7 @@ BuildRequires:	SDL-devel
 BuildRequires:	curl-devel
 Buildrequires:	dev86-devel
 BuildRequires:  libext2fs-devel
+BuildRequires:  libvncserver-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	libpython-devel >= 2.4
 BuildRequires:	zlib-devel
@@ -116,7 +117,7 @@ export LINUX_SRC_PATH=$RPM_SOURCE_DIR
 export EXTRAVERSION="xen-%{kernel_extra_version}"
 export pae=y 
 %make kernels
-%make -C tools
+%make -C tools XENFB_TOOLS=y
 %make -C xen
 %make -C docs
 
@@ -128,7 +129,7 @@ export DESTDIR=%{buildroot}
 export EXTRAVERSION="xen-%{kernel_extra_version}"
 export pae=y
 make linux-2.6-xen-install
-make -C tools install
+make -C tools install XENFB_TOOLS=y
 make -C xen install
 
 # remove additional kernel symlink
