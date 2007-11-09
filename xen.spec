@@ -1,5 +1,5 @@
 %define name            xen
-%define rel             5
+%define rel             6
 %define kernel_version          2.6.18
 %define kernel_extra_version    %{rel}mdv    
 %define kernel_string           %{kernel_version}-xen-%{kernel_extra_version}
