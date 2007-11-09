@@ -199,8 +199,8 @@ install -m 644 docs/pdf/* %{buildroot}%{_docdir}/%{name}
 # install state directory
 install -d -m 755 %{buildroot}%{_localstatedir}/xend/{domains,state,storage}
 
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
+%post -n %{libname} -p /sbin/ldconfig
+%postun -n %{libname} -p /sbin/ldconfig
 
 %post -n kernel-xen-%{kernel_extra_version}
 /sbin/installkernel %{kernel_string}
