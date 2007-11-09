@@ -205,6 +205,9 @@ install -d -m 755 %{buildroot}%{_localstatedir}/xend/{domains,state,storage}
 %post -n kernel-xen-%{kernel_extra_version}
 /sbin/installkernel %{kernel_string}
 
+%preun -n kernel-xen-%{kernel_extra_version}
+/sbin/installkernel -R %{kernel_string}
+
 %post -n kernel-xen-devel-%{kernel_extra_version}
 if [ -d /lib/modules/%{kernel_string} ]; then
     ln -sf /usr/src/linux-%{kernel_string} /lib/modules/%{kernel_string}/build
