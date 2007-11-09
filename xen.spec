@@ -82,6 +82,7 @@ XEN documentation.
 %package -n %{libname}
 Summary:    Libraries for %{name}
 Group:      System/Libraries
+Conflicts:  %name} < 3.1.0-5mdv2008.1
 
 %description -n	%{libname}
 This package contains the libraries needed to run programs dynamically
@@ -92,6 +93,7 @@ Summary:    Static libraries and header files for %{name}
 Group:      Development/C
 Requires:	%{libname} = %{version}-%{release}
 Provides:	%{name}-devel = %{version}-%{release}
+Conflicts:  %name} < 3.1.0-5mdv2008.1
 
 %description -n	%{develname}
 This package contains the static development libraries and headers needed
