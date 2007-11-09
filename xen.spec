@@ -33,7 +33,8 @@ Requires:   iptables
 Requires:   bridge-utils
 Requires:   glibc-xen
 Requires:   grub
-Requires:   kernel-xen = %{version}
+Requires:   kernel-xen = %{version}-%{release}
+Requires(pre):   kernel-xen = %{version}-%{release}
 BuildRequires:	SDL-devel
 BuildRequires:	curl-devel
 Buildrequires:	dev86-devel
@@ -55,7 +56,6 @@ Summary:    XEN kernel
 Group:      System/Kernel and hardware
 Provides:   kernel = %{kernel_version}
 Provides:   kernel-xen = %{kernel_version}
-Requires(post):	xen
 Obsoletes:  kernel-xen-uptodate
 
 %description -n kernel-xen-%{kernel_extra_version}
@@ -202,10 +202,10 @@ install -d -m 755 %{buildroot}%{_localstatedir}/xend/{domains,state,storage}
 %post -n %{libname} -p /sbin/ldconfig
 %postun -n %{libname} -p /sbin/ldconfig
 
-%post -n kernel-xen-%{kernel_extra_version}
+%post
 /sbin/installkernel %{kernel_string}
 
-%preun -n kernel-xen-%{kernel_extra_version}
+%preun
 /sbin/installkernel -R %{kernel_string}
 
 %post -n kernel-xen-devel-%{kernel_extra_version}
