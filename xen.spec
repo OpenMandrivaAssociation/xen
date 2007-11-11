@@ -51,7 +51,7 @@ The basic tools for managing XEN virtual machines.
 Summary:    XEN kernel
 Group:      System/Kernel and hardware
 Provides:   kernel = %{kernel_version}
-Provides:   kernel-xen = %{kernel_version}
+Provides:   kernel-xen = %{version}-%{release}
 Obsoletes:  kernel-xen-uptodate
 
 %description -n kernel-xen-%{kernel_extra_version}
