@@ -1,5 +1,5 @@
 %define name            xen
-%define rel             6
+%define rel             1
 %define kernel_version          2.6.18
 %define kernel_extra_version    %{rel}mdv    
 %define kernel_string           %{kernel_version}-xen-%{kernel_extra_version}
@@ -8,12 +8,12 @@
 %define develname	    %mklibname %{name} -d
 
 Name:       %{name}
-Version:    3.1.0
+Version:    3.1.1
 Release:    %mkrel %rel
 Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
 License:    GPL
-Source0:    %{name}-%{version}-src.tgz
+Source0:    %{name}-%{version}.tgz
 Source1:    bash-completion
 Source2:    linux-%{kernel_version}.tar.bz2
 Patch0:     xen-3.1-fix-default-interface.patch
@@ -21,10 +21,6 @@ Patch1:     xen-3.1.0-bnx2-1.4.51b.patch
 Patch2:     xen-3.1.0-memcmp.patch
 Patch3:     xen-3.1.0-squashfs.patch
 Patch4:     xen-3.1.0-use-same-arch-default-config.patch
-# CVE-2007-1321
-Patch401:   xen-qemu-ne2000-CVE-2007-1321.patch
-# CVE-2007-4993
-Patch402:   pygrub-dont-exec.patch
 Patch403:   xen-3.0.3-CVE-2007-3919.patch
 Requires:   python-twisted-core
 Requires:   python
@@ -100,15 +96,13 @@ This package contains the static development libraries and headers needed
 to compile applications linked with Xen libraries.
 
 %prep
-%setup -q -n %{name}-%{version}-src
+%setup -q -n %{name}-%{version}
 %patch0 -p 1
 %patch1 -p 1
 %patch2 -p 0
 %patch3 -p 1
 %patch4 -p 1
 
-%patch401 -p 1
-%patch402 -p 1
 %patch403 -p1
 
 %build
