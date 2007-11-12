@@ -78,7 +78,7 @@ XEN documentation.
 %package -n %{libname}
 Summary:    Libraries for %{name}
 Group:      System/Libraries
-Conflicts:  %name} < 3.1.0-5mdv2008.1
+Conflicts:  %{name} < 3.1.0-5mdv2008.1
 
 %description -n	%{libname}
 This package contains the libraries needed to run programs dynamically
