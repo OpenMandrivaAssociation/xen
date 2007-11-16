@@ -1,7 +1,7 @@
 %define name            xen
 %define rel             1
 %define kernel_version          2.6.18
-%define xen_version             3.1.1
+%define xen_version             3.1.2
 %define kernel_extra_version    %{xen_version}-%{rel}mdv    
 # ensures file uniqueness
 %define kernel_file_string      %{kernel_version}-xen-%{kernel_extra_version}
@@ -17,7 +17,7 @@ Release:    %mkrel %rel
 Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
 License:    GPL
-Source0:    %{name}-%{version}.tgz
+Source0:    %{name}-%{version}.tar.gz
 Source1:    bash-completion
 Source2:    linux-%{kernel_version}.tar.bz2
 Patch0:     xen-3.1-fix-default-interface.patch
@@ -25,7 +25,6 @@ Patch1:     xen-3.1.0-bnx2-1.4.51b.patch
 Patch2:     xen-3.1.0-memcmp.patch
 Patch3:     xen-3.1.0-squashfs.patch
 Patch4:     xen-3.1.0-use-same-arch-default-config.patch
-Patch403:   xen-3.0.3-CVE-2007-3919.patch
 Requires:   python-twisted-core
 Requires:   python
 Requires:   module-init-tools
@@ -109,8 +108,6 @@ to compile applications linked with Xen libraries.
 %patch2 -p 0
 %patch3 -p 1
 %patch4 -p 1
-
-%patch403 -p1
 
 %build
 
