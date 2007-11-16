@@ -1,14 +1,18 @@
 %define name            xen
 %define rel             1
 %define kernel_version          2.6.18
-%define kernel_extra_version    %{version}-%{rel}mdv    
-%define kernel_string           %{kernel_version}-xen-%{kernel_extra_version}
+%define xen_version             3.1.1
+%define kernel_extra_version    %{xen_version}-%{rel}mdv    
+# ensures file uniqueness
+%define kernel_file_string      %{kernel_version}-xen-%{kernel_extra_version}
+# ensures package uniqueness
+%define kernel_package_string   %{kernel_version}-%{kernel_extra_version}
 %define major           3.0
 %define libname         %mklibname %{name} %{major}
 %define develname	    %mklibname %{name} -d
 
 Name:       %{name}
-Version:    3.1.1
+Version:    %{xen_version}
 Release:    %mkrel %rel
 Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
@@ -29,8 +33,8 @@ Requires:   iptables
 Requires:   bridge-utils
 Requires:   glibc-xen
 Requires:   grub
-Requires:   kernel-xen = %{version}-%{release}
-Requires(pre):   kernel-xen = %{version}-%{release}
+Requires:   kernel-xen-%{kernel_package_string}
+Requires(pre):   kernel-xen-%{kernel_package_string}
 BuildRequires:	SDL-devel
 BuildRequires:	curl-devel
 Buildrequires:	dev86-devel
@@ -47,24 +51,27 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}
 %description 
 The basic tools for managing XEN virtual machines.
 
-%package -n kernel-xen-%{kernel_extra_version}
+%package -n kernel-xen-%{kernel_package_string}
+Version:    1
+Release:    %mkrel 1
 Summary:    XEN kernel
 Group:      System/Kernel and hardware
 Provides:   kernel = %{kernel_version}
-Provides:   kernel-xen = %{version}-%{release}
 Obsoletes:  kernel-xen-uptodate
 
-%description -n kernel-xen-%{kernel_extra_version}
+%description -n kernel-xen-%{kernel_package_string}
 XEN kernel.
 
-%package -n kernel-xen-devel-%{kernel_extra_version}
+%package -n kernel-xen-devel-%{kernel_package_string}
+Version:    1
+Release:    %mkrel 1
 Summary:    XEN kernel sources
 Group:      System/Kernel and hardware
-Requires:   kernel-xen = %{version}
+Requires:   kernel-xen-%{kernel_package_string}
 Provides:   kernel-devel = %{kernel_version}
 Obsoletes:  kernel-xen-uptodate-devel
 
-%description -n kernel-xen-devel-%{kernel_extra_version}
+%description -n kernel-xen-devel-%{kernel_package_string}
 XEN kernel sources.
 
 %package doc
@@ -96,7 +103,7 @@ This package contains the static development libraries and headers needed
 to compile applications linked with Xen libraries.
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q -n %{name}-%{xen_version}
 %patch0 -p 1
 %patch1 -p 1
 %patch2 -p 0
@@ -133,16 +140,16 @@ make -C xen install
 rm -f %{buildroot}/boot/vmlinuz-2.6-xen-%{kernel_extra_version}
 
 # drop dangling symlinks
-rm -f %{buildroot}/lib/modules/%{kernel_string}/{build,source}
+rm -f %{buildroot}/lib/modules/%{kernel_file_string}/{build,source}
 
 # compress modules
-find %{buildroot}/lib/modules/%{kernel_string} -name "*.ko" | xargs gzip -9
+find %{buildroot}/lib/modules/%{kernel_file_string} -name "*.ko" | xargs gzip -9
 /sbin/depmod -u -ae -b %{buildroot} -r \
-    -F %{buildroot}/boot/System.map-%{kernel_string} \
-    %{kernel_string}
+    -F %{buildroot}/boot/System.map-%{kernel_file_string} \
+    %{kernel_file_string}
 
 # create modules description
-pushd %{buildroot}/lib/modules/%{kernel_string}
+pushd %{buildroot}/lib/modules/%{kernel_file_string}
 find . -name "*.ko.gz" | xargs /sbin/modinfo | \
     perl -lne 'print "$name\t$1" if $name && /^description:\s*(.*)/; $name = $1 if m!^filename:\s*(.*)\.k?o!; $name =~ s!.*/!!' \
     > modules.description
@@ -150,10 +157,10 @@ popd
 
 # install kernel sources
 install -d -m 755 %{buildroot}%{_prefix}/src
-cp -r -L linux-2.6.18-xen %{buildroot}%{_prefix}/src/linux-%{kernel_string}
+cp -r -L linux-2.6.18-xen %{buildroot}%{_prefix}/src/linux-%{kernel_file_string}
 
 # clean sources from useless source files
-pushd %{buildroot}%{_prefix}/src/linux-%{kernel_string}
+pushd %{buildroot}%{_prefix}/src/linux-%{kernel_file_string}
 for i in alpha arm arm26 avr32 blackfin cris frv h8300 ia64 mips m32r m68k m68knommu parisc powerpc ppc s390 sh sh64 v850 xtensa; do
 	rm -rf arch/$i
 	rm -rf include/asm-$i
@@ -197,23 +204,23 @@ install -d -m 755 %{buildroot}%{_localstatedir}/xend/{domains,state,storage}
 %postun -n %{libname} -p /sbin/ldconfig
 
 %post
-/sbin/installkernel %{kernel_string}
+/sbin/installkernel %{kernel_file_string}
 
 %preun
-/sbin/installkernel -R %{kernel_string}
+/sbin/installkernel -R %{kernel_file_string}
 
-%post -n kernel-xen-devel-%{kernel_extra_version}
-if [ -d /lib/modules/%{kernel_string} ]; then
-    ln -sTf /usr/src/linux-%{kernel_string} /lib/modules/%{kernel_string}/build
-    ln -sTf /usr/src/linux-%{kernel_string} /lib/modules/%{kernel_string}/source
+%post -n kernel-xen-devel-%{kernel_package_string}
+if [ -d /lib/modules/%{kernel_file_string} ]; then
+    ln -sTf /usr/src/linux-%{kernel_file_string} /lib/modules/%{kernel_file_string}/build
+    ln -sTf /usr/src/linux-%{kernel_file_string} /lib/modules/%{kernel_file_string}/source
 fi
 
-%postun -n kernel-xen-devel-%{kernel_extra_version}
-if [ -L /lib/modules/%{kernel_string}/build ]; then
-    rm -f /lib/modules/%{kernel_string}/build
+%postun -n kernel-xen-devel-%{kernel_package_string}
+if [ -L /lib/modules/%{kernel_file_string}/build ]; then
+    rm -f /lib/modules/%{kernel_file_string}/build
 fi
-if [ -L /lib/modules/%{kernel_string}/source ]; then
-    rm -f /lib/modules/%{kernel_string}/source
+if [ -L /lib/modules/%{kernel_file_string}/source ]; then
+    rm -f /lib/modules/%{kernel_file_string}/source
 fi
 
 %clean
@@ -281,14 +288,14 @@ rm -rf %{buildroot}
 %{_bindir}/xen-detect
 %{_sysconfdir}/bash_completion.d/xen
 
-%files -n kernel-xen-%{kernel_extra_version}
+%files -n kernel-xen-%{kernel_package_string}
 %defattr(-,root,root)
 /boot/*-xen-%{kernel_extra_version}
-/lib/modules/%{kernel_string}
+/lib/modules/%{kernel_file_string}
 
-%files -n kernel-xen-devel-%{kernel_extra_version}
+%files -n kernel-xen-devel-%{kernel_package_string}
 %defattr(-,root,root)
-%{_prefix}/src/linux-%{kernel_string}
+%{_prefix}/src/linux-%{kernel_file_string}
 
 %files doc
 %defattr(-,root,root)
