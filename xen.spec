@@ -1,5 +1,5 @@
 %define name            xen
-%define rel             1
+%define rel             2
 %define kernel_version          2.6.18
 %define xen_version             3.1.2
 %define kernel_extra_version    %{xen_version}-%{rel}mdv    
@@ -93,8 +93,8 @@ linked with Xen libraries.
 %package -n %{develname}
 Summary:    Static libraries and header files for %{name}
 Group:      Development/C
-Requires:	%{libname} = %{version}-%{release}
-Provides:	%{name}-devel = %{version}-%{release}
+Requires:	%{libname} = %{xen_version}-%{release}
+Provides:	%{name}-devel = %{xen_version}-%{release}
 Conflicts:  %name} < 3.1.0-5mdv2008.1
 
 %description -n	%{develname}
