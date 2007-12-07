@@ -1,7 +1,8 @@
 %define name            xen
-%define rel             2
+%define rel             3
 %define kernel_version          2.6.18
 %define xen_version             3.1.2
+%define xen_release             %mkrel %rel
 %define kernel_extra_version    %{xen_version}-%{rel}mdv    
 # ensures file uniqueness
 %define kernel_file_string      %{kernel_version}-xen-%{kernel_extra_version}
@@ -13,7 +14,7 @@
 
 Name:       %{name}
 Version:    %{xen_version}
-Release:    %mkrel %rel
+Release:    %{xen_release}
 Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
 License:    GPL
@@ -50,6 +51,34 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}
 %description 
 The basic tools for managing XEN virtual machines.
 
+%package doc
+Summary:    XEN documentation
+Group:      System/Kernel and hardware
+Obsoletes:  xen-uptodate-doc
+
+%description doc
+XEN documentation.
+
+%package -n %{libname}
+Summary:    Libraries for %{name}
+Group:      System/Libraries
+Conflicts:  %{name} < 3.1.0-5mdv2008.1
+
+%description -n	%{libname}
+This package contains the libraries needed to run programs dynamically
+linked with Xen libraries.
+
+%package -n %{develname}
+Summary:    Static libraries and header files for %{name}
+Group:      Development/C
+Requires:	%{libname} = %{xen_version}-%{xen_release}
+Provides:	%{name}-devel = %{xen_version}-%{xen_release}
+Conflicts:  %name} < 3.1.0-5mdv2008.1
+
+%description -n	%{develname}
+This package contains the static development libraries and headers needed
+to compile applications linked with Xen libraries.
+
 %package -n kernel-xen-%{kernel_package_string}
 Version:    1
 Release:    %mkrel 1
@@ -72,34 +101,6 @@ Obsoletes:  kernel-xen-uptodate-devel
 
 %description -n kernel-xen-devel-%{kernel_package_string}
 XEN kernel sources.
-
-%package doc
-Summary:    XEN documentation
-Group:      System/Kernel and hardware
-Obsoletes:  xen-uptodate-doc
-
-%description doc
-XEN documentation.
-
-%package -n %{libname}
-Summary:    Libraries for %{name}
-Group:      System/Libraries
-Conflicts:  %{name} < 3.1.0-5mdv2008.1
-
-%description -n	%{libname}
-This package contains the libraries needed to run programs dynamically
-linked with Xen libraries.
-
-%package -n %{develname}
-Summary:    Static libraries and header files for %{name}
-Group:      Development/C
-Requires:	%{libname} = %{xen_version}-%{release}
-Provides:	%{name}-devel = %{xen_version}-%{release}
-Conflicts:  %name} < 3.1.0-5mdv2008.1
-
-%description -n	%{develname}
-This package contains the static development libraries and headers needed
-to compile applications linked with Xen libraries.
 
 %prep
 %setup -q -n %{name}-%{xen_version}
