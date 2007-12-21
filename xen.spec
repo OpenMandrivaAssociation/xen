@@ -46,6 +46,7 @@ BuildRequires:	zlib-devel
 BuildRequires:  tetex-latex
 BuildRequires:  tetex-texi2html
 Obsoletes:      xen-uptodate
+BuildRoot:      %{_tmppath}/%{name}-%{version}
 
 %description 
 The basic tools for managing XEN virtual machines.
