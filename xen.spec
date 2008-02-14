@@ -1,13 +1,15 @@
 %define name            xen
-%define rel             3
-%define kernel_version          2.6.18
-%define xen_version             3.1.2
+%define xen_version             3.2.0
+%define rel                     1
 %define xen_release             %mkrel %rel
-%define kernel_extra_version    %{xen_version}-%{rel}mdv    
+%define kernel_version          2.6.18.8
+%define kernel_tarball_version  2.6.18
+%define kernel_extraversion     -xen-%{xen_version}-%{rel}mdv
+%define kernel_source_dir       %{kernel_tarball_version}-xen-%{xen_version}
 # ensures file uniqueness
-%define kernel_file_string      %{kernel_version}-xen-%{kernel_extra_version}
+%define kernel_file_string      %{kernel_version}%{kernel_extraversion}
 # ensures package uniqueness
-%define kernel_package_string   %{kernel_version}-%{kernel_extra_version}
+%define kernel_package_string   %{kernel_version}-%{rel}mdv
 %define major           3.0
 %define libname         %mklibname %{name} %{major}
 %define develname	    %mklibname %{name} -d
@@ -20,11 +22,11 @@ Group:      System/Kernel and hardware
 License:    GPL
 Source0:    %{name}-%{version}.tar.gz
 Source1:    bash-completion
-Source2:    linux-%{kernel_version}.tar.bz2
+Source2:    linux-2.6.18-xen-3.2.0.tar.gz
 Patch0:     xen-3.1-fix-default-interface.patch
-Patch1:     xen-3.1.0-bnx2-1.4.51b.patch
+Patch1:     xen-3.2.0-bnx2-1.4.51b.patch
 Patch2:     xen-3.1.0-memcmp.patch
-Patch3:     xen-3.1.0-squashfs.patch
+Patch3:     xen-3.2.0-squashfs.patch
 Patch4:     xen-3.1.0-use-same-arch-default-config.patch
 Requires:   python-twisted-core
 Requires:   python
@@ -104,21 +106,27 @@ XEN kernel sources.
 
 %prep
 %setup -q -n %{name}-%{xen_version}
-%patch0 -p 1
+%setup -q -T -D -a 2 -n %{name}-%{xen_version}
+cd linux-%{kernel_source_dir}
+
+#%patch0 -p 1
 %patch1 -p 1
-%patch2 -p 0
+#%patch2 -p 0
 %patch3 -p 1
-%patch4 -p 1
+#%patch4 -p 1
 
 %build
 
 # clean all stuff
 export CFLAGS="$CFLAGS -fno-strict-aliasing"
 export HOSTCC="$HOSTCC -fno-strict-aliasing"
-export LINUX_SRC_PATH=$RPM_SOURCE_DIR
-export EXTRAVERSION="xen-%{kernel_extra_version}"
+export XEN_LINUX_SOURCE=tarball
+export KETCHUP=/bin/true
+export LINUX_VER=%{kernel_version}
+export EXTRAVERSION=%{kernel_extraversion}
+export LINUX_SRCDIR=linux-%{kernel_source_dir}
 export pae=y 
-%make kernels
+%make linux-2.6-xen-build IMAGE_TARGET=bzImage </dev/null
 %make -C tools XENFB_TOOLS=y
 %make -C xen
 %make -C docs
@@ -128,9 +136,13 @@ export pae=y
 rm -rf %{buildroot}
 export DONT_GPRINTIFY=1
 export DESTDIR=%{buildroot}
-export EXTRAVERSION="xen-%{kernel_extra_version}"
+export XEN_LINUX_SOURCE=tarball
+export KETCHUP=/bin/true
+export LINUX_VER=%{kernel_version}
+export EXTRAVERSION=%{kernel_extraversion}
+export LINUX_SRCDIR=linux-%{kernel_source_dir}
 export pae=y
-make linux-2.6-xen-install
+make linux-2.6-xen-install IMAGE_TARGET=bzImage
 make -C tools install XENFB_TOOLS=y
 make -C xen install
 
@@ -155,7 +167,8 @@ popd
 
 # install kernel sources
 install -d -m 755 %{buildroot}%{_prefix}/src
-cp -r -L linux-2.6.18-xen %{buildroot}%{_prefix}/src/linux-%{kernel_file_string}
+cp -r -L linux-%{kernel_source_dir} \
+    %{buildroot}%{_prefix}/src/linux-%{kernel_file_string}
 
 # clean sources from useless source files
 pushd %{buildroot}%{_prefix}/src/linux-%{kernel_file_string}
@@ -275,6 +288,8 @@ rm -rf %{buildroot}
 %{_sbindir}/tapdisk
 %{_sbindir}/xentrace_setmask
 %{_sbindir}/xen-python-path
+%{_sbindir}/flask-loadpolicy
+%{_sbindir}/xsview
 %{_bindir}/xenperf
 %{_bindir}/xencons
 %{_bindir}/lomount
@@ -288,8 +303,11 @@ rm -rf %{buildroot}
 
 %files -n kernel-xen-%{kernel_package_string}
 %defattr(-,root,root)
-/boot/*-xen-%{kernel_extra_version}
 /lib/modules/%{kernel_file_string}
+/boot/System.map-%{kernel_file_string}
+/boot/config-%{kernel_file_string}
+/boot/vmlinuz-%{kernel_file_string}
+
 
 %files -n kernel-xen-devel-%{kernel_package_string}
 %defattr(-,root,root)
