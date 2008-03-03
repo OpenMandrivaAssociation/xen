@@ -9,7 +9,7 @@
 # ensures file uniqueness
 %define kernel_file_string      %{kernel_version}%{kernel_extraversion}
 # ensures package uniqueness
-%define kernel_package_string   %{kernel_version}-%{rel}mdv
+%define kernel_package_string   %{kernel_version}%{kernel_extraversion}
 %define major           3.0
 %define libname         %mklibname %{name} %{major}
 %define develname	    %mklibname %{name} -d
@@ -23,11 +23,9 @@ License:    GPL
 Source0:    %{name}-%{version}.tar.gz
 Source1:    bash-completion
 Source2:    linux-2.6.18-xen-3.2.0.tar.gz
-Patch0:     xen-3.1-fix-default-interface.patch
 Patch1:     xen-3.2.0-bnx2-1.4.51b.patch
-Patch2:     xen-3.1.0-memcmp.patch
 Patch3:     xen-3.2.0-squashfs.patch
-Patch4:     xen-3.1.0-use-same-arch-default-config.patch
+Patch4:     xen-3.2.0-use-same-arch-default-config.patch
 Requires:   python-twisted-core
 Requires:   python
 Requires:   module-init-tools
@@ -109,11 +107,9 @@ XEN kernel sources.
 %setup -q -T -D -a 2 -n %{name}-%{xen_version}
 cd linux-%{kernel_source_dir}
 
-#%patch0 -p 1
 %patch1 -p 1
-#%patch2 -p 0
 %patch3 -p 1
-#%patch4 -p 1
+%patch4 -p 1
 
 %build
 
@@ -126,7 +122,7 @@ export LINUX_VER=%{kernel_version}
 export EXTRAVERSION=%{kernel_extraversion}
 export LINUX_SRCDIR=linux-%{kernel_source_dir}
 export pae=y 
-%make linux-2.6-xen-build IMAGE_TARGET=bzImage </dev/null
+make linux-2.6-xen-build < /dev/null
 %make -C tools XENFB_TOOLS=y
 %make -C xen
 %make -C docs
@@ -136,13 +132,13 @@ export pae=y
 rm -rf %{buildroot}
 export DONT_GPRINTIFY=1
 export DESTDIR=%{buildroot}
-export XEN_LINUX_SOURCE=tarball
+#export XEN_LINUX_SOURCE=tarball
 export KETCHUP=/bin/true
 export LINUX_VER=%{kernel_version}
 export EXTRAVERSION=%{kernel_extraversion}
 export LINUX_SRCDIR=linux-%{kernel_source_dir}
 export pae=y
-make linux-2.6-xen-install IMAGE_TARGET=bzImage
+make linux-2.6-xen-install
 make -C tools install XENFB_TOOLS=y
 make -C xen install
 
