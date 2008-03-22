@@ -1,6 +1,6 @@
 %define name            xen
 %define xen_version             3.2.0
-%define rel                     1
+%define rel                     2
 %define xen_release             %mkrel %rel
 %define kernel_version          2.6.18.8
 %define kernel_tarball_version  2.6.18
@@ -26,6 +26,7 @@ Source2:    linux-2.6.18-xen-3.2.0.tar.gz
 Patch1:     xen-3.2.0-bnx2-1.4.51b.patch
 Patch3:     xen-3.2.0-squashfs.patch
 Patch4:     xen-3.2.0-use-same-arch-default-config.patch
+Patch5:     xen-3.2.0-silent-initscripts-errors.patch
 Requires:   python-twisted-core
 Requires:   python
 Requires:   module-init-tools
