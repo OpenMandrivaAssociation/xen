@@ -1,6 +1,6 @@
 %define name            xen
 %define xen_version             3.2.0
-%define rel                     2
+%define rel                     3
 %define xen_release             %mkrel %rel
 %define kernel_version          2.6.18.8
 %define kernel_tarball_version  2.6.18
@@ -86,6 +86,7 @@ Release:    %mkrel 1
 Summary:    XEN kernel
 Group:      System/Kernel and hardware
 Provides:   kernel = %{kernel_version}
+Provides:   kernel-xen = %{kernel_version}
 Obsoletes:  kernel-xen-uptodate
 
 %description -n kernel-xen-%{kernel_package_string}
@@ -98,6 +99,7 @@ Summary:    XEN kernel sources
 Group:      System/Kernel and hardware
 Requires:   kernel-xen-%{kernel_package_string}
 Provides:   kernel-devel = %{kernel_version}
+Provides:   kernel-xen-devel = %{kernel_version}
 Obsoletes:  kernel-xen-uptodate-devel
 
 %description -n kernel-xen-devel-%{kernel_package_string}
