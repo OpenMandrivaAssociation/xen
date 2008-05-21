@@ -28,7 +28,7 @@ Patch3:     xen-3.2.0-squashfs.patch
 Patch4:     xen-3.2.0-use-same-arch-default-config.patch
 Patch5:     xen-3.2.0-silent-initscripts-errors.patch
 Patch6:     xen-3.2.0-gcc4.3.patch
-Patch7:     linux-2.6.git-d1ab423502e787e264b4797a5fa200d804c4fd63.patch
+Patch7:     linux-2.6.git-fc31c7716355a226b8ed4e16f4581e5c8fa53570.patch
 Requires:   python-twisted-core
 Requires:   python
 Requires:   module-init-tools
