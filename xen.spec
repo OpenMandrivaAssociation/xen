@@ -108,8 +108,9 @@ XEN kernel sources.
 %prep
 %setup -q -n %{name}-%{xen_version}
 %setup -q -T -D -a 2 -n %{name}-%{xen_version}
-cd linux-%{kernel_source_dir}
+%patch5 -p 1
 
+cd linux-%{kernel_source_dir}
 %patch1 -p 1
 %patch3 -p 1
 %patch4 -p 1
