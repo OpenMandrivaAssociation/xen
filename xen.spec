@@ -1,11 +1,11 @@
 %define name            xen
-%define xen_version             3.2.0
-%define rel                     4
+%define xen_version             3.2.1
+%define rel                     1
 %define xen_release             %mkrel %rel
 %define kernel_version          2.6.18.8
 %define kernel_tarball_version  2.6.18
 %define kernel_extraversion     -xen-%{xen_version}-%{rel}mdv
-%define kernel_source_dir       %{kernel_tarball_version}-xen-%{xen_version}
+%define kernel_source_dir       %{kernel_tarball_version}-xen-3.2.0
 # ensures file uniqueness
 %define kernel_file_string      %{kernel_version}%{kernel_extraversion}
 # ensures package uniqueness
@@ -213,6 +213,10 @@ install -m 644 docs/pdf/* %{buildroot}%{_docdir}/%{name}
 
 # install state directory
 install -d -m 755 %{buildroot}%{_localstatedir}/xend/{domains,state,storage}
+
+%check
+grep -q "^CONFIG_SQUASHFS=m" %{buildroot}/boot/config-%{kernel_file_string} \
+    || exit 0
 
 %post -n %{libname} -p /sbin/ldconfig
 %postun -n %{libname} -p /sbin/ldconfig
