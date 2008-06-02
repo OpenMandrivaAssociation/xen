@@ -212,7 +212,7 @@ install -m 644 docs/ps/* %{buildroot}%{_docdir}/%{name}
 install -m 644 docs/pdf/* %{buildroot}%{_docdir}/%{name}
 
 # install state directory
-install -d -m 755 %{buildroot}%{_localstatedir}/xend/{domains,state,storage}
+install -d -m 755 %{buildroot}%{_localstatedir}/lib/xend/{domains,state,storage}
 
 %check
 grep -q "^CONFIG_SQUASHFS=m" %{buildroot}/boot/config-%{kernel_file_string} \
@@ -272,8 +272,8 @@ rm -rf %{buildroot}
 %{_libdir}/python/xen-3.0-py2.5.egg-info
 %endif
 %{_datadir}/xen
-%{_localstatedir}/xend
-%{_localstatedir}/xenstored
+%{_localstatedir}/lib/xend
+%{_localstatedir}/lib/xenstored
  /var/run/xenstored
 /boot/xen*
 %{_sysconfdir}/init.d/xend
