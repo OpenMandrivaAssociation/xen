@@ -218,8 +218,12 @@ install -d -m 755 %{buildroot}%{_localstatedir}/lib/xend/{domains,state,storage}
 grep -q "^CONFIG_SQUASHFS=m" %{buildroot}/boot/config-%{kernel_file_string} \
     || exit 0
 
+%if %mdkversion < 200900
 %post -n %{libname} -p /sbin/ldconfig
+%endif
+%if %mdkversion < 200900
 %postun -n %{libname} -p /sbin/ldconfig
+%endif
 
 %post
 /sbin/installkernel %{kernel_file_string}
