@@ -1,6 +1,6 @@
 %define name            xen
 %define xen_version             3.2.1
-%define rel                     2
+%define rel                     3
 %define xen_release             %mkrel %rel
 %define kernel_version          2.6.18.8
 %define kernel_tarball_version  2.6.18
@@ -29,8 +29,9 @@ Patch4:     xen-3.2.0-use-same-arch-default-config.patch
 Patch5:     xen-3.2.0-silent-initscripts-errors.patch
 Patch6:     xen-3.2.0-gcc4.3.patch
 Patch7:     linux-2.6.git-fc31c7716355a226b8ed4e16f4581e5c8fa53570.patch
-Requires:   python-twisted-core
 Requires:   python
+Requires:   python-twisted-core
+Requires:   python-pyxml
 Requires:   module-init-tools
 Requires:   iptables
 Requires:   bridge-utils
