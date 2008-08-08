@@ -84,7 +84,7 @@ to compile applications linked with Xen libraries.
 
 %package -n kernel-xen-%{kernel_package_string}
 Version:    1
-Release:    %mkrel 1
+Release:    %mkrel 2
 Summary:    XEN kernel
 Group:      System/Kernel and hardware
 Provides:   kernel = %{kernel_version}
@@ -96,7 +96,7 @@ XEN kernel.
 
 %package -n kernel-xen-devel-%{kernel_package_string}
 Version:    1
-Release:    %mkrel 1
+Release:    %mkrel 2
 Summary:    XEN kernel sources
 Group:      System/Kernel and hardware
 Requires:   kernel-xen-%{kernel_package_string}
