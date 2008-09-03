@@ -1,11 +1,11 @@
 %define name            xen
-%define xen_version             3.2.1
-%define rel                     3
+%define xen_version             3.3.0
+%define rel                     1
 %define xen_release             %mkrel %rel
 %define kernel_version          2.6.18.8
 %define kernel_tarball_version  2.6.18
 %define kernel_extraversion     -xen-%{xen_version}-%{rel}mdv
-%define kernel_source_dir       %{kernel_tarball_version}-xen-3.2.0
+%define kernel_source_dir       %{kernel_tarball_version}-xen-3.3.0
 # ensures file uniqueness
 %define kernel_file_string      %{kernel_version}%{kernel_extraversion}
 # ensures package uniqueness
@@ -22,13 +22,11 @@ Group:      System/Kernel and hardware
 License:    GPL
 Source0:    %{name}-%{version}.tar.gz
 Source1:    bash-completion
-Source2:    linux-2.6.18-xen-3.2.0.tar.gz
+Source2:    linux-2.6.18-xen-3.3.0.tar.gz
 Patch1:     xen-3.2.0-bnx2-1.4.51b.patch
 Patch3:     xen-3.2.0-squashfs.patch
 Patch4:     xen-3.2.0-use-same-arch-default-config.patch
 Patch5:     xen-3.2.0-silent-initscripts-errors.patch
-Patch6:     xen-3.2.0-gcc4.3.patch
-Patch7:     linux-2.6.git-fc31c7716355a226b8ed4e16f4581e5c8fa53570.patch
 Requires:   python
 Requires:   python-twisted-core
 Requires:   python-pyxml
@@ -116,8 +114,6 @@ cd linux-%{kernel_source_dir}
 %patch1 -p 1
 %patch3 -p 1
 %patch4 -p 1
-%patch6 -p 1
-%patch7 -p 1
 
 %build
 
@@ -208,7 +204,6 @@ install -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/bash_completion.d/xen
 rm -rf %{buildroot}%{_docdir}/qemu
 install -d -m 755 %{buildroot}%{_docdir}/%{name}
 install -m 644 README %{buildroot}%{_docdir}/%{name}
-install -m 644 tools/ioemu/*.html %{buildroot}%{_docdir}/%{name}
 install -m 644 docs/ps/* %{buildroot}%{_docdir}/%{name}
 install -m 644 docs/pdf/* %{buildroot}%{_docdir}/%{name}
 
@@ -254,12 +249,13 @@ rm -rf %{buildroot}
 %dir %{_docdir}/%{name}
 %{_docdir}/%{name}/README
 %config(noreplace) %{_sysconfdir}/sysconfig/xendomains
-%config(noreplace) %{_sysconfdir}/udev/rules.d/xen-backend.rules
-%config(noreplace) %{_sysconfdir}/udev/xen-backend.rules
+%config(noreplace) %{_sysconfdir}/hotplug/xen-backend.agent
 %dir %{_sysconfdir}/xen
 %{_sysconfdir}/xen/scripts
 %{_sysconfdir}/xen/auto
 %{_sysconfdir}/xen/qemu-ifup
+%{_sysconfdir}/xen/README
+%{_sysconfdir}/xen/README.incompatibilities
 %config(noreplace) %{_sysconfdir}/xen/*.sxp
 %config(noreplace) %{_sysconfdir}/xen/*.xml
 %config(noreplace) %{_sysconfdir}/xen/xmexample*
@@ -283,6 +279,7 @@ rm -rf %{buildroot}
 /boot/xen*
 %{_sysconfdir}/init.d/xend
 %{_sysconfdir}/init.d/xendomains
+%{_sbindir}/fs-backend
 %{_sbindir}/xenstored
 %{_sbindir}/netfix
 %{_sbindir}/xm
@@ -304,13 +301,14 @@ rm -rf %{buildroot}
 %{_sbindir}/xsview
 %{_bindir}/xenperf
 %{_bindir}/xencons
-%{_bindir}/lomount
 %{_bindir}/xentrace
 %{_bindir}/xentrace_format
 %{_bindir}/xentrace_setsize
 %{_bindir}/xenstore-*
 %{_bindir}/pygrub
 %{_bindir}/xen-detect
+%{_bindir}/qemu-img-xen
+%{_bindir}/xenstore
 %{_sysconfdir}/bash_completion.d/xen
 
 %files -n kernel-xen-%{kernel_package_string}
@@ -329,7 +327,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %{_docdir}/%{name}/*
 %exclude %{_docdir}/%{name}/README
-%doc docs/ps/* docs/pdf/* tools/ioemu/*.html
+%doc docs/ps/* docs/pdf/*
 
 %files -n %{libname}
 %defattr(-,root,root)
