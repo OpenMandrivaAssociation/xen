@@ -1,6 +1,6 @@
 %define name            xen
 %define xen_version             3.3.0
-%define rel                     1
+%define rel                     2
 %define xen_release             %mkrel %rel
 %define kernel_version          2.6.18.8
 %define kernel_tarball_version  2.6.18
@@ -23,6 +23,8 @@ License:    GPL
 Source0:    %{name}-%{version}.tar.gz
 Source1:    bash-completion
 Source2:    linux-2.6.18-xen-3.3.0.tar.gz
+Source3:    xend.init
+Source4:    xendomains.init
 Patch1:     xen-3.2.0-bnx2-1.4.51b.patch
 Patch3:     xen-3.2.0-squashfs.patch
 Patch4:     xen-3.2.0-use-same-arch-default-config.patch
@@ -209,6 +211,10 @@ install -m 644 docs/pdf/* %{buildroot}%{_docdir}/%{name}
 
 # install state directory
 install -d -m 755 %{buildroot}%{_localstatedir}/lib/xend/{domains,state,storage}
+
+# install our own init scripts
+install -m 755 %{SOURCE3}%{_initrddir}/xend
+install -m 755 %{SOURCE4}%{_initrddir}/xendomains
 
 %check
 grep -q "^CONFIG_SQUASHFS=m" %{buildroot}/boot/config-%{kernel_file_string} \
