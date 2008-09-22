@@ -115,6 +115,15 @@ cd linux-%{kernel_source_dir}
 %patch3 -p 1
 %patch4 -p 1
 
+# configure kernel
+%ifarch x86_64
+    %define kernel_config_file linux-defconfig_xen_x86_64
+%else
+    %define kernel_config_file linux-defconfig_xen_x86_32
+%endif
+perl -pi -e 's/^CONFIG_BLK_DEV_LOOP=.*/CONFIG_BLK_DEV_LOOP=m/' \
+    buildconfigs/%{kernel_config_file}
+
 %build
 
 # clean all stuff
@@ -211,8 +220,8 @@ install -m 644 docs/pdf/* %{buildroot}%{_docdir}/%{name}
 install -d -m 755 %{buildroot}%{_localstatedir}/lib/xend/{domains,state,storage}
 
 # install our own init scripts
-install -m 755 %{SOURCE3}%{_initrddir}/xend
-install -m 755 %{SOURCE4}%{_initrddir}/xendomains
+install -m 755 %{SOURCE3} %{buildroot}%{_initrddir}/xend
+install -m 755 %{SOURCE4} %{buildroot}%{_initrddir}/xendomains
 
 %check
 grep -q "^CONFIG_SQUASHFS=m" %{buildroot}/boot/config-%{kernel_file_string} \
