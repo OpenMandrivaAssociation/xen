@@ -28,7 +28,6 @@ Source4:    xendomains.init
 Patch1:     xen-3.2.0-bnx2-1.4.51b.patch
 Patch3:     xen-3.2.0-squashfs.patch
 Patch4:     xen-3.2.0-use-same-arch-default-config.patch
-Patch5:     xen-3.2.0-silent-initscripts-errors.patch
 Requires:   python
 Requires:   python-twisted-core
 Requires:   python-pyxml
@@ -110,7 +109,6 @@ XEN kernel sources.
 %prep
 %setup -q -n %{name}-%{xen_version}
 %setup -q -T -D -a 2 -n %{name}-%{xen_version}
-%patch5 -p 1
 
 cd linux-%{kernel_source_dir}
 %patch1 -p 1
