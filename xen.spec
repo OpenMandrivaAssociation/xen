@@ -220,8 +220,12 @@ install -m 644 docs/pdf/* %{buildroot}%{_docdir}/%{name}
 install -d -m 755 %{buildroot}%{_localstatedir}/lib/xend/{domains,state,storage}
 
 # install our own init scripts
+install -d -m 755 %{buildroot}%{_initrddir}
 install -m 755 %{SOURCE3} %{buildroot}%{_initrddir}/xend
 install -m 755 %{SOURCE4} %{buildroot}%{_initrddir}/xendomains
+
+# delete original ones
+rm -rf %{buildroot}%{_sysconfdir}/init.d
 
 %check
 grep -q "^CONFIG_SQUASHFS=m" %{buildroot}/boot/config-%{kernel_file_string} \
@@ -290,8 +294,8 @@ rm -rf %{buildroot}
 %{_localstatedir}/lib/xenstored
  /var/run/xenstored
 /boot/xen*
-%{_sysconfdir}/init.d/xend
-%{_sysconfdir}/init.d/xendomains
+%{_initrddir}/xend
+%{_initrddir}/xendomains
 %{_sbindir}/fs-backend
 %{_sbindir}/xenstored
 %{_sbindir}/netfix
