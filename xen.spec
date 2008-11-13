@@ -1,6 +1,6 @@
-%define name            xen
+%define name                    xen
 %define xen_version             3.3.0
-%define rel                     2
+%define rel                     4
 %define xen_release             %mkrel %rel
 %define kernel_version          2.6.18.8
 %define kernel_tarball_version  2.6.18
@@ -47,6 +47,7 @@ BuildRequires:	libpython-devel >= 2.4
 BuildRequires:	zlib-devel
 BuildRequires:  tetex-latex
 BuildRequires:  tetex-texi2html
+BuildRequires:  pciutils-devel
 Obsoletes:      xen-uptodate
 BuildRoot:      %{_tmppath}/%{name}-%{version}
 
@@ -136,7 +137,7 @@ export EXTRAVERSION=%{kernel_extraversion}
 export LINUX_SRCDIR=linux-%{kernel_source_dir}
 export pae=y 
 make linux-2.6-xen-build < /dev/null
-%make -C tools
+%make -C tools HOTPLUGS=install-udev
 %make -C xen
 %make -C docs
 
@@ -266,7 +267,8 @@ rm -rf %{buildroot}
 %dir %{_docdir}/%{name}
 %{_docdir}/%{name}/README
 %config(noreplace) %{_sysconfdir}/sysconfig/xendomains
-%config(noreplace) %{_sysconfdir}/hotplug/xen-backend.agent
+%config(noreplace) %{_sysconfdir}/udev/rules.d/xen-backend.rules
+%config(noreplace) %{_sysconfdir}/udev/xen-backend.rules
 %dir %{_sysconfdir}/xen
 %{_sysconfdir}/xen/scripts
 %{_sysconfdir}/xen/auto
