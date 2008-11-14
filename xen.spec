@@ -153,7 +153,7 @@ export EXTRAVERSION=%{kernel_extraversion}
 export LINUX_SRCDIR=linux-%{kernel_source_dir}
 export pae=y
 make linux-2.6-xen-install
-make -C tools install
+make -C tools install HOTPLUGS=install-udev
 make -C xen install
 
 # remove additional kernel symlink
