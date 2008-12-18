@@ -158,6 +158,8 @@ make -C xen install
 
 # remove additional kernel symlink
 rm -f %{buildroot}/boot/vmlinuz-2.6-xen-%{kernel_extra_version}
+rm -f %{buildroot}/boot/xen-3.3.gz
+rm -f %{buildroot}/boot/xen-3.gz
 
 # drop dangling symlinks
 rm -f %{buildroot}/lib/modules/%{kernel_file_string}/{build,source}
