@@ -1,6 +1,6 @@
 %define name                    xen
 %define xen_version             3.3.0
-%define rel                     4
+%define rel                     5
 %define xen_release             %mkrel %rel
 %define kernel_version          2.6.18.8
 %define kernel_tarball_version  2.6.18
@@ -219,6 +219,9 @@ install -m 644 docs/pdf/* %{buildroot}%{_docdir}/%{name}
 
 # install state directory
 install -d -m 755 %{buildroot}%{_localstatedir}/lib/xend/{domains,state,storage}
+# symlink /var/lib/xend to allow live migration to work
+# https://bugs.launchpad.net/ubuntu/+source/xen-3.2/+bug/277132
+(cd %{buildroot}%{_localstatedir}/lib && rmdir xen && ln -sf xend xen)
 
 # install our own init scripts
 install -d -m 755 %{buildroot}%{_initrddir}
@@ -292,6 +295,7 @@ rm -rf %{buildroot}
 %{_libdir}/python/xen-3.0-py2.5.egg-info
 %endif
 %{_datadir}/xen
+%{_localstatedir}/lib/xen
 %{_localstatedir}/lib/xend
 %{_localstatedir}/lib/xenstored
  /var/run/xenstored
