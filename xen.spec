@@ -1,6 +1,6 @@
 %define name                    xen
 %define xen_version             3.3.0
-%define rel                     5
+%define rel                     6
 %define xen_release             %mkrel %rel
 %define kernel_version          2.6.18.8
 %define kernel_tarball_version  2.6.18
