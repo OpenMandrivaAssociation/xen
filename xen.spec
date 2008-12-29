@@ -25,6 +25,12 @@ Source1:    bash-completion
 Source2:    linux-2.6.18-xen-3.3.0.tar.gz
 Source3:    xend.init
 Source4:    xendomains.init
+Source10:   zlib-1.2.3.tar.gz
+Source11:   newlib-1.16.0.tar.gz
+Source12:   grub-0.97.tar.gz
+Source13:   lwip-1.3.0.tar.gz
+Source14:   pciutils-2.2.9.tar.bz2
+Patch0:     xen-3.3.0-fix-stubdom-makefile.patch
 Patch1:     xen-3.2.0-bnx2-1.4.51b.patch
 Patch3:     xen-3.2.0-squashfs.patch
 Patch4:     xen-3.2.0-use-same-arch-default-config.patch
@@ -110,11 +116,21 @@ XEN kernel sources.
 %prep
 %setup -q -n %{name}-%{xen_version}
 %setup -q -T -D -a 2 -n %{name}-%{xen_version}
+%patch0 -p 1
 
 cd linux-%{kernel_source_dir}
 %patch1 -p 1
 %patch3 -p 1
 %patch4 -p 1
+cd ..
+
+
+# install additional sources
+cp %{SOURCE10} stubdom
+cp %{SOURCE11} stubdom
+cp %{SOURCE12} stubdom
+cp %{SOURCE13} stubdom
+cp %{SOURCE14} stubdom
 
 # configure kernel
 %ifarch x86_64
@@ -137,10 +153,13 @@ export EXTRAVERSION=%{kernel_extraversion}
 export LINUX_SRCDIR=linux-%{kernel_source_dir}
 export pae=y 
 make linux-2.6-xen-build < /dev/null
-%make -C tools HOTPLUGS=install-udev
-%make -C xen
-%make -C docs
-
+%make -C tools HOTPLUGS=install-udev 
+%make -C xen 
+%make -C docs 
+%make -C stubdom
+%ifarch x86_64
+%make -C stubdom pv-grub XEN_TARGET_ARCH=x86_32
+%endif
 
 %install
 rm -rf %{buildroot}
@@ -155,6 +174,10 @@ export pae=y
 make linux-2.6-xen-install
 make -C tools install HOTPLUGS=install-udev
 make -C xen install
+make -C stubdom install
+%ifarch x86_64
+make -C stubdom install-grub XEN_TARGET_ARCH=x86_32
+%endif
 
 # remove additional kernel symlink
 rm -f %{buildroot}/boot/vmlinuz-2.6-xen-%{kernel_extra_version}
@@ -293,8 +316,8 @@ rm -rf %{buildroot}
 %{_libdir}/python/grub/*
 %{_libdir}/python/fsimage.so
 %if %{mdkversion} > 200700
-%{_libdir}/python/pygrub-0.3-py2.5.egg-info
-%{_libdir}/python/xen-3.0-py2.5.egg-info
+%{_libdir}/python/pygrub-0.3-py%{pyver}.egg-info
+%{_libdir}/python/xen-3.0-py%{pyver}.egg-info
 %endif
 %{_datadir}/xen
 %{_localstatedir}/lib/xen
