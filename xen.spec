@@ -54,6 +54,7 @@ BuildRequires:	zlib-devel
 BuildRequires:  tetex-latex
 BuildRequires:  tetex-texi2html
 BuildRequires:  pciutils-devel
+BuildRequires:  texinfo
 Obsoletes:      xen-uptodate
 BuildRoot:      %{_tmppath}/%{name}-%{version}
 
