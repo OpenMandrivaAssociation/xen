@@ -1,6 +1,6 @@
 %define name                    xen
-%define xen_version             3.3.0
-%define rel                     7
+%define xen_version             3.3.1
+%define rel                     1
 %define xen_release             %mkrel %rel
 %define kernel_version          2.6.18.8
 %define kernel_tarball_version  2.6.18
@@ -30,7 +30,7 @@ Source11:   newlib-1.16.0.tar.gz
 Source12:   grub-0.97.tar.gz
 Source13:   lwip-1.3.0.tar.gz
 Source14:   pciutils-2.2.9.tar.bz2
-Patch0:     xen-3.3.0-fix-stubdom-makefile.patch
+Patch0:     xen-3.3.1-fix-stubdom-Makefile.patch
 Patch1:     xen-3.2.0-bnx2-1.4.51b.patch
 Patch3:     xen-3.2.0-squashfs.patch
 Patch4:     xen-3.2.0-use-same-arch-default-config.patch
@@ -333,7 +333,6 @@ rm -rf %{buildroot}
 %{_sbindir}/netfix
 %{_sbindir}/xm
 %{_sbindir}/xend
-%{_sbindir}/xenperf
 %{_sbindir}/xenconsoled
 %{_sbindir}/xentop
 %{_sbindir}/xen-bugtool
@@ -348,7 +347,8 @@ rm -rf %{buildroot}
 %{_sbindir}/xen-python-path
 %{_sbindir}/flask-loadpolicy
 %{_sbindir}/xsview
-%{_bindir}/xenperf
+%{_sbindir}/xenperf
+%{_sbindir}/xenpm
 %{_bindir}/xencons
 %{_bindir}/xentrace
 %{_bindir}/xentrace_format
