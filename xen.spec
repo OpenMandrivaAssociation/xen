@@ -1,6 +1,6 @@
 %define name                    xen
 %define xen_version             3.3.1
-%define rel                     1
+%define rel                     2
 %define xen_release             %mkrel %rel
 %define kernel_version          2.6.18.8
 %define kernel_tarball_version  2.6.18
@@ -21,7 +21,6 @@ Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
 License:    GPL
 Source0:    %{name}-%{version}.tar.gz
-Source1:    bash-completion
 Source2:    linux-2.6.18-xen-3.3.0.tar.gz
 Source3:    xend.init
 Source4:    xendomains.init
@@ -232,10 +231,6 @@ install -d -m 755 %{buildroot}%{_mandir}/man{1,5}
 install -m 644 docs/man1/* %{buildroot}%{_mandir}/man1
 install -m 644 docs/man5/* %{buildroot}%{_mandir}/man5
 
-# bash completion
-install -m 755 -d %{buildroot}%{_sysconfdir}/bash_completion.d
-install -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/bash_completion.d/xen
-
 # install doc manually
 rm -rf %{buildroot}%{_docdir}/qemu
 install -d -m 755 %{buildroot}%{_docdir}/%{name}
@@ -358,7 +353,6 @@ rm -rf %{buildroot}
 %{_bindir}/xen-detect
 %{_bindir}/qemu-img-xen
 %{_bindir}/xenstore
-%{_sysconfdir}/bash_completion.d/xen
 
 %files -n kernel-xen-%{kernel_package_string}
 %defattr(-,root,root)
