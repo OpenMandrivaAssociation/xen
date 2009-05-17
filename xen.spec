@@ -1,18 +1,18 @@
 %define name                    xen
 %define xen_version             3.3.1
-%define rel                     2
+%define rel                     3
 %define xen_release             %mkrel %rel
-%define kernel_version          2.6.18.8
-%define kernel_tarball_version  2.6.18
+%define kernel_version          2.6.27.5
+%define kernel_tarball_version  2.6.27
 %define kernel_extraversion     -xen-%{xen_version}-%{rel}mdv
-%define kernel_source_dir       %{kernel_tarball_version}-xen-3.3.0
+%define kernel_source_dir       %{kernel_tarball_version}-xen.hg
 # ensures file uniqueness
 %define kernel_file_string      %{kernel_version}%{kernel_extraversion}
 # ensures package uniqueness
 %define kernel_package_string   %{kernel_version}%{kernel_extraversion}
-%define major           3.0
-%define libname         %mklibname %{name} %{major}
-%define develname	    %mklibname %{name} -d
+%define major                   3.0
+%define libname                 %mklibname %{name} %{major}
+%define develname               %mklibname %{name} -d
 
 Name:       %{name}
 Version:    %{xen_version}
@@ -21,7 +21,8 @@ Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
 License:    GPL
 Source0:    %{name}-%{version}.tar.gz
-Source2:    linux-2.6.18-xen-3.3.0.tar.gz
+Source1:    linux-2.6.27-xen.hg.tar.bz2
+Source2:    buildconfigs.tar.bz2
 Source3:    xend.init
 Source4:    xendomains.init
 Source10:   zlib-1.2.3.tar.gz
@@ -30,9 +31,8 @@ Source12:   grub-0.97.tar.gz
 Source13:   lwip-1.3.0.tar.gz
 Source14:   pciutils-2.2.9.tar.bz2
 Patch0:     xen-3.3.1-fix-stubdom-Makefile.patch
-Patch1:     xen-3.2.0-bnx2-1.4.51b.patch
-Patch3:     xen-3.2.0-squashfs.patch
-Patch4:     xen-3.2.0-use-same-arch-default-config.patch
+Patch1:     linux-2.6.27-xen.hg-avoid-gcc-optmization.patch
+Patch2:     linux-2.6.27-xen.hg-restore-default-mkcompile_h.patch
 Requires:   python
 Requires:   python-twisted-core
 Requires:   python-pyxml
@@ -115,13 +115,18 @@ XEN kernel sources.
 
 %prep
 %setup -q -n %{name}-%{xen_version}
-%setup -q -T -D -a 2 -n %{name}-%{xen_version}
+%setup -q -T -D -a 1 -n %{name}-%{xen_version}
 %patch0 -p 1
 
 cd linux-%{kernel_source_dir}
+tar -jxf %{_sourcedir}/buildconfigs.tar.bz2
+extra_version=%{kernel_extraversion}
+ln -s linux-defconfig_xen_x86_32 \
+      buildconfigs/linux-defconfig_${extra_version#-}_x86_32
+ln -s linux-defconfig_xen_x86_64 \
+      buildconfigs/linux-defconfig_${extra_version#-}_x86_64
 %patch1 -p 1
-%patch3 -p 1
-%patch4 -p 1
+%patch2 -p 1
 cd ..
 
 
@@ -132,14 +137,6 @@ cp %{SOURCE12} stubdom
 cp %{SOURCE13} stubdom
 cp %{SOURCE14} stubdom
 
-# configure kernel
-%ifarch x86_64
-    %define kernel_config_file linux-defconfig_xen_x86_64
-%else
-    %define kernel_config_file linux-defconfig_xen_x86_32
-%endif
-perl -pi -e 's/^CONFIG_BLK_DEV_LOOP=.*/CONFIG_BLK_DEV_LOOP=m/' \
-    buildconfigs/%{kernel_config_file}
 
 %build
 
@@ -200,6 +197,9 @@ find . -name "*.ko.gz" | xargs /sbin/modinfo | \
     > modules.description
 popd
 
+# remove unwanted firmware files
+rm -rf %{buildroot}/lib/firmware
+
 # install kernel sources
 install -d -m 755 %{buildroot}%{_prefix}/src
 cp -r -L linux-%{kernel_source_dir} \
@@ -207,23 +207,12 @@ cp -r -L linux-%{kernel_source_dir} \
 
 # clean sources from useless source files
 pushd %{buildroot}%{_prefix}/src/linux-%{kernel_file_string}
-for i in alpha arm arm26 avr32 blackfin cris frv h8300 ia64 mips m32r m68k m68knommu parisc powerpc ppc s390 sh sh64 v850 xtensa; do
+for i in alpha arm arm26 avr32 blackfin cris frv h8300 ia64 m32r mips m68k \
+         m68knommu mn10300 parisc powerpc s390 sh sh64 sparc sparc64 v850 xtensa
+do
 	rm -rf arch/$i
 	rm -rf include/asm-$i
 done
-
-%ifnarch %{ix86} x86_64
-	rm -rf arch/i386
-	rm -rf arch/x86_64
-	rm -rf include/asm-i386
-	rm -rf include/asm-x86_64
-%endif
-%ifnarch sparc sparc64
-	rm -rf arch/sparc
-	rm -rf arch/sparc64
-	rm -rf include/asm-sparc
-	rm -rf include/asm-sparc64
-%endif
 popd
 
 # fix man pages
