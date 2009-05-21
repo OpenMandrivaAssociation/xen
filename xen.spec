@@ -1,8 +1,8 @@
 %define name                    xen
 %define xen_version             3.3.1
-%define rel                     3
+%define rel                     4
 %define xen_release             %mkrel %rel
-%define kernel_version          2.6.27.5
+%define kernel_version          2.6.27.21
 %define kernel_tarball_version  2.6.27
 %define kernel_extraversion     -xen-%{xen_version}-%{rel}mdv
 %define kernel_source_dir       %{kernel_tarball_version}-xen.hg
@@ -31,8 +31,12 @@ Source12:   grub-0.97.tar.gz
 Source13:   lwip-1.3.0.tar.gz
 Source14:   pciutils-2.2.9.tar.bz2
 Patch0:     xen-3.3.1-fix-stubdom-Makefile.patch
-Patch1:     linux-2.6.27-xen.hg-avoid-gcc-optmization.patch
-Patch2:     linux-2.6.27-xen.hg-restore-default-mkcompile_h.patch
+Patch1:     xen-3.3.1-gcc-4.4-inline-asm-build-fix.patch
+Patch100:   linux-2.6.27-xen.hg-avoid-gcc-optmization.patch
+Patch101:   linux-2.6.27-xen.hg-suse-2.6.27.21.patch
+Patch102:   linux-2.6.27-xen.hg-restore-default-mkcompile_h.patch
+Patch103:   linux-2.6.27-xen.hg-gcc-4.4-elif-build-fix.patch
+Patch104:   linux-2.6.27-xen.hg-gcc-4.4-percpu-build-fix.patch
 Requires:   python
 Requires:   python-twisted-core
 Requires:   python-pyxml
@@ -90,7 +94,7 @@ to compile applications linked with Xen libraries.
 
 %package -n kernel-xen-%{kernel_package_string}
 Version:    1
-Release:    %mkrel 2
+Release:    %mkrel 1
 Summary:    XEN kernel
 Group:      System/Kernel and hardware
 Provides:   kernel = %{kernel_version}
@@ -102,7 +106,7 @@ XEN kernel.
 
 %package -n kernel-xen-devel-%{kernel_package_string}
 Version:    1
-Release:    %mkrel 2
+Release:    %mkrel 1
 Summary:    XEN kernel sources
 Group:      System/Kernel and hardware
 Requires:   kernel-xen-%{kernel_package_string}
@@ -117,6 +121,7 @@ XEN kernel sources.
 %setup -q -n %{name}-%{xen_version}
 %setup -q -T -D -a 1 -n %{name}-%{xen_version}
 %patch0 -p 1
+%patch1 -p 1
 
 cd linux-%{kernel_source_dir}
 tar -jxf %{_sourcedir}/buildconfigs.tar.bz2
@@ -125,8 +130,19 @@ ln -s linux-defconfig_xen_x86_32 \
       buildconfigs/linux-defconfig_${extra_version#-}_x86_32
 ln -s linux-defconfig_xen_x86_64 \
       buildconfigs/linux-defconfig_${extra_version#-}_x86_64
-%patch1 -p 1
-%patch2 -p 1
+%if %{mdkversion} < 200910
+cat << EOF | tee -a buildconfigs/linux-defconfig_xen_x86_32 \
+                 >> buildconfigs/linux-defconfig_xen_x86_64
+CONFIG_SYSFS_DEPRECATED=y
+CONFIG_SYSFS_DEPRECATED_V2=y
+CONFIG_USB_DEVICE_CLASS=y
+EOF
+%endif
+%patch100 -p 1
+%patch101 -p 1
+%patch102 -p 1
+%patch103 -p 1
+%patch104 -p 1
 cd ..
 
 
@@ -149,7 +165,7 @@ export LINUX_VER=%{kernel_version}
 export EXTRAVERSION=%{kernel_extraversion}
 export LINUX_SRCDIR=linux-%{kernel_source_dir}
 export pae=y 
-make linux-2.6-xen-build < /dev/null
+%make linux-2.6-xen-build < /dev/null
 %make -C tools HOTPLUGS=install-udev 
 %make -C xen 
 %make -C docs 
