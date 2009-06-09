@@ -1,8 +1,8 @@
 %define name                    xen
 %define xen_version             3.3.1
-%define rel                     4
+%define rel                     5
 %define xen_release             %mkrel %rel
-%define kernel_version          2.6.27.21
+%define kernel_version          2.6.27.23
 %define kernel_tarball_version  2.6.27
 %define kernel_extraversion     -xen-%{xen_version}-%{rel}mdv
 %define kernel_source_dir       %{kernel_tarball_version}-xen.hg
@@ -32,11 +32,12 @@ Source13:   lwip-1.3.0.tar.gz
 Source14:   pciutils-2.2.9.tar.bz2
 Patch0:     xen-3.3.1-fix-stubdom-Makefile.patch
 Patch1:     xen-3.3.1-gcc-4.4-inline-asm-build-fix.patch
-Patch100:   linux-2.6.27-xen.hg-avoid-gcc-optmization.patch
-Patch101:   linux-2.6.27-xen.hg-suse-2.6.27.21.patch
+Patch100:   linux-2.6.27-xen.hg-suse-2.6.27.23.patch
+Patch101:   linux-2.6.27-xen.hg-avoid-gcc-optmization.patch
 Patch102:   linux-2.6.27-xen.hg-restore-default-mkcompile_h.patch
 Patch103:   linux-2.6.27-xen.hg-gcc-4.4-elif-build-fix.patch
 Patch104:   linux-2.6.27-xen.hg-gcc-4.4-percpu-build-fix.patch
+Patch105:   linux-2.6.27-xen.hg-fix-mmconfig-detection-with-32bit-near-4g.patch
 Requires:   python
 Requires:   python-twisted-core
 Requires:   python-pyxml
@@ -143,6 +144,7 @@ EOF
 %patch102 -p 1
 %patch103 -p 1
 %patch104 -p 1
+%patch105 -p 1
 cd ..
 
 
