@@ -1,6 +1,6 @@
 %define name                    xen
-%define xen_version             3.3.1
-%define rel                     5
+%define xen_version             3.4.0
+%define rel                     1
 %define xen_release             %mkrel %rel
 %define kernel_version          2.6.27.23
 %define kernel_tarball_version  2.6.27
@@ -20,7 +20,7 @@ Release:    %{xen_release}
 Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
 License:    GPL
-Source0:    %{name}-%{version}.tar.gz
+Source0:    http://bits.xensource.com/oss-xen/release/%{version}/%{name}-%{version}-xen.tar.gz
 Source1:    linux-2.6.27-xen.hg.tar.bz2
 Source2:    buildconfigs.tar.bz2
 Source3:    xend.init
@@ -31,7 +31,6 @@ Source12:   grub-0.97.tar.gz
 Source13:   lwip-1.3.0.tar.gz
 Source14:   pciutils-2.2.9.tar.bz2
 Patch0:     xen-3.3.1-fix-stubdom-Makefile.patch
-Patch1:     xen-3.3.1-gcc-4.4-inline-asm-build-fix.patch
 Patch100:   linux-2.6.27-xen.hg-suse-2.6.27.23.patch
 Patch101:   linux-2.6.27-xen.hg-avoid-gcc-optmization.patch
 Patch102:   linux-2.6.27-xen.hg-restore-default-mkcompile_h.patch
@@ -122,7 +121,7 @@ XEN kernel sources.
 %setup -q -n %{name}-%{xen_version}
 %setup -q -T -D -a 1 -n %{name}-%{xen_version}
 %patch0 -p 1
-%patch1 -p 1
+find stubdom -name config.cache | xargs rm -f
 
 cd linux-%{kernel_source_dir}
 tar -jxf %{_sourcedir}/buildconfigs.tar.bz2
@@ -300,6 +299,8 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/sysconfig/xendomains
 %config(noreplace) %{_sysconfdir}/udev/rules.d/xen-backend.rules
 %config(noreplace) %{_sysconfdir}/udev/xen-backend.rules
+%config(noreplace) %{_sysconfdir}/udev/rules.d/xend.rules
+%config(noreplace) %{_sysconfdir}/udev/xend.rules
 %dir %{_sysconfdir}/xen
 %{_sysconfdir}/xen/scripts
 %{_sysconfdir}/xen/auto
@@ -315,12 +316,12 @@ rm -rf %{buildroot}
 %{_prefix}/lib/xen
 %endif
 %{_libdir}/fs
-%{_libdir}/python/xen
-%{_libdir}/python/grub/*
-%{_libdir}/python/fsimage.so
+%{py_sitedir}/xen
+%{py_sitedir}/grub/*
+%{py_sitedir}/fsimage.so
 %if %{mdkversion} > 200700
-%{_libdir}/python/pygrub-0.3-py%{pyver}.egg-info
-%{_libdir}/python/xen-3.0-py%{pyver}.egg-info
+%{py_sitedir}/pygrub-0.3-py%{pyver}.egg-info
+%{py_sitedir}/xen-3.0-py%{pyver}.egg-info
 %endif
 %{_datadir}/xen
 %{_localstatedir}/lib/xen
@@ -332,7 +333,6 @@ rm -rf %{buildroot}
 %{_initrddir}/xendomains
 %{_sbindir}/fs-backend
 %{_sbindir}/xenstored
-%{_sbindir}/netfix
 %{_sbindir}/xm
 %{_sbindir}/xend
 %{_sbindir}/xenconsoled
@@ -351,6 +351,7 @@ rm -rf %{buildroot}
 %{_sbindir}/xsview
 %{_sbindir}/xenperf
 %{_sbindir}/xenpm
+%{_sbindir}/xenpmd
 %{_bindir}/xencons
 %{_bindir}/xentrace
 %{_bindir}/xentrace_format
@@ -359,6 +360,7 @@ rm -rf %{buildroot}
 %{_bindir}/pygrub
 %{_bindir}/xen-detect
 %{_bindir}/qemu-img-xen
+%{_bindir}/qemu-nbd-xen
 %{_bindir}/xenstore
 
 %files -n kernel-xen-%{kernel_package_string}
