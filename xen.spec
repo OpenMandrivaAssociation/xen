@@ -121,7 +121,6 @@ XEN kernel sources.
 %setup -q -n %{name}-%{xen_version}
 %setup -q -T -D -a 1 -n %{name}-%{xen_version}
 %patch0 -p 1
-find stubdom -name config.cache | xargs rm -f
 
 cd linux-%{kernel_source_dir}
 tar -jxf %{_sourcedir}/buildconfigs.tar.bz2
@@ -172,6 +171,7 @@ export pae=y
 %make -C docs 
 %make -C stubdom
 %ifarch x86_64
+find stubdom -name config.cache | xargs rm -f
 %make -C stubdom pv-grub XEN_TARGET_ARCH=x86_32
 %endif
 
@@ -190,6 +190,7 @@ make -C tools install HOTPLUGS=install-udev
 make -C xen install
 make -C stubdom install
 %ifarch x86_64
+find stubdom -name config.cache | xargs rm -f
 make -C stubdom install-grub XEN_TARGET_ARCH=x86_32
 %endif
 
@@ -316,12 +317,12 @@ rm -rf %{buildroot}
 %{_prefix}/lib/xen
 %endif
 %{_libdir}/fs
-%{py_sitedir}/xen
-%{py_sitedir}/grub/*
-%{py_sitedir}/fsimage.so
+%{py_platsitedir}/xen
+%{py_platsitedir}/grub/*
+%{py_platsitedir}/fsimage.so
 %if %{mdkversion} > 200700
-%{py_sitedir}/pygrub-0.3-py%{pyver}.egg-info
-%{py_sitedir}/xen-3.0-py%{pyver}.egg-info
+%{py_platsitedir}/pygrub-0.3-py%{pyver}.egg-info
+%{py_platsitedir}/xen-3.0-py%{pyver}.egg-info
 %endif
 %{_datadir}/xen
 %{_localstatedir}/lib/xen
@@ -369,7 +370,6 @@ rm -rf %{buildroot}
 /boot/System.map-%{kernel_file_string}
 /boot/config-%{kernel_file_string}
 /boot/vmlinuz-%{kernel_file_string}
-
 
 %files -n kernel-xen-devel-%{kernel_package_string}
 %defattr(-,root,root)
