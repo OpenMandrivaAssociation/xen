@@ -171,15 +171,14 @@ export pae=y
 %make -C docs 
 %make -C stubdom
 %ifarch x86_64
-find stubdom -name config.cache | xargs rm -f
 %make -C stubdom pv-grub XEN_TARGET_ARCH=x86_32
 %endif
 
 %install
 rm -rf %{buildroot}
+export CFLAGS="$CFLAGS -fno-strict-aliasing"
 export DONT_GPRINTIFY=1
 export DESTDIR=%{buildroot}
-#export XEN_LINUX_SOURCE=tarball
 export KETCHUP=/bin/true
 export LINUX_VER=%{kernel_version}
 export EXTRAVERSION=%{kernel_extraversion}
@@ -190,7 +189,6 @@ make -C tools install HOTPLUGS=install-udev
 make -C xen install
 make -C stubdom install
 %ifarch x86_64
-find stubdom -name config.cache | xargs rm -f
 make -C stubdom install-grub XEN_TARGET_ARCH=x86_32
 %endif
 
