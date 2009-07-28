@@ -31,6 +31,13 @@ Source12:   grub-0.97.tar.gz
 Source13:   lwip-1.3.0.tar.gz
 Source14:   pciutils-2.2.9.tar.bz2
 Patch0:     xen-3.3.1-fix-stubdom-Makefile.patch
+# fedora patches
+Patch11:    xen-initscript.patch
+Patch12:    xen-fix-deprecated-warnings.patch
+Patch13:    xen-xenstore-cli.patch
+Patch14:    xen-dumpdir.patch
+Patch15: xen-net-disable-iptables-on-bridge.patch
+
 Patch100:   linux-2.6.27-xen.hg-suse-2.6.27.23.patch
 Patch101:   linux-2.6.27-xen.hg-avoid-gcc-optmization.patch
 Patch102:   linux-2.6.27-xen.hg-restore-default-mkcompile_h.patch
@@ -121,6 +128,12 @@ XEN kernel sources.
 %setup -q -n %{name}-%{xen_version}
 %setup -q -T -D -a 1 -n %{name}-%{xen_version}
 %patch0 -p 1
+
+%patch11 -p 1
+%patch12 -p 1
+%patch13 -p 1
+%patch14 -p 1
+%patch15 -p 1
 
 cd linux-%{kernel_source_dir}
 tar -jxf %{_sourcedir}/buildconfigs.tar.bz2
