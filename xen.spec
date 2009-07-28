@@ -23,8 +23,13 @@ License:    GPL
 Source0:    http://bits.xensource.com/oss-xen/release/%{version}/%{name}-%{version}-xen.tar.gz
 Source1:    linux-2.6.27-xen.hg.tar.bz2
 Source2:    buildconfigs.tar.bz2
-Source3:    xend.init
-Source4:    xendomains.init
+Source20:   init.xenstored 
+Source21:   init.xenconsoled
+Source22:   init.blktapctrl
+Source23:   init.xend
+Source30:   sysconfig.xenstored
+Source31:   sysconfig.xenconsoled
+Source32:   sysconfig.blktapctrl
 Source10:   zlib-1.2.3.tar.gz
 Source11:   newlib-1.16.0.tar.gz
 Source12:   grub-0.97.tar.gz
@@ -274,6 +279,22 @@ rm -rf %{buildroot}%{_sysconfdir}/init.d
 rm -rf %{buildroot}/etc/udev/rules.d/xen*.rules
 mv %{buildroot}/etc/udev/xen*.rules %{buildroot}/etc/udev/rules.d
 
+# init scripts
+install -d -m 755 %{buildroot}%{_sysconfdir}/rc.d/init.d
+mv %{buildroot}%{_sysconfdir}/init.d/* %{buildroot}%{_sysconfdir}/rc.d/init.d
+rmdir %{buildroot}%{_sysconfdir}/init.d
+install -m 755 %{SOURCE20} %{buildroot}%{_sysconfdir}/rc.d/init.d/xenstored
+install -m 755 %{SOURCE21} %{buildroot}%{_sysconfdir}/rc.d/init.d/xenconsoled
+install -m 755 %{SOURCE22} %{buildroot}%{_sysconfdir}/rc.d/init.d/blktapctrl
+install -m 755 %{SOURCE23} %{buildroot}%{_sysconfdir}/rc.d/init.d/xend
+
+# sysconfig
+mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
+install -m 644 %{SOURCE30} %{buildroot}%{_sysconfdir}/sysconfig/xenstored
+install -m 644 %{SOURCE31} %{buildroot}%{_sysconfdir}/sysconfig/xenconsoled
+install -m 644 %{SOURCE32} %{buildroot}%{_sysconfdir}/sysconfig/blktapctrl
+
+
 
 %check
 grep -q "^CONFIG_SQUASHFS=m" %{buildroot}/boot/config-%{kernel_file_string} \
@@ -313,9 +334,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %dir %{_docdir}/%{name}
 %{_docdir}/%{name}/README
-%config(noreplace) %{_sysconfdir}/sysconfig/xendomains
-%config(noreplace) %{_sysconfdir}/udev/rules.d/xen-backend.rules
-%config(noreplace) %{_sysconfdir}/udev/rules.d/xend.rules
+%config(noreplace) %{_sysconfdir}/udev/rules.d/*
 %dir %{_sysconfdir}/xen
 %{_sysconfdir}/xen/scripts
 %{_sysconfdir}/xen/auto
@@ -339,13 +358,27 @@ rm -rf %{buildroot}
 %{py_platsitedir}/xen-3.0-py%{pyver}.egg-info
 %endif
 %{_datadir}/xen
+# general xen state
 %{_localstatedir}/lib/xen
 %{_localstatedir}/lib/xend
+# xenstore state
 %{_localstatedir}/lib/xenstored
- /var/run/xenstored
+ {_localstatedir}/run/xenstored
+ # xend state
+ {_localstatedir}/run/xend
+ {_localstatedir}/run/xend/boot
 /boot/xen*
+# init scripts
 %{_initrddir}/xend
 %{_initrddir}/xendomains
+%{_initrddir}/blktapctrl
+%{_initrddir}/xenstored
+%{_initrddir}/xenconsoled
+%config(noreplace) %{_sysconfdir}/sysconfig/xendomains
+%config(noreplace) %{_sysconfdir}/sysconfig/blktapctrl
+%config(noreplace) %{_sysconfdir}/sysconfig/xenstored
+%config(noreplace) %{_sysconfdir}/sysconfig/xenconsoled
+
 %{_sbindir}/fs-backend
 %{_sbindir}/xenstored
 %{_sbindir}/xm
