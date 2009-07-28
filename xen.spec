@@ -60,16 +60,25 @@ Requires:   grub
 Requires:   kernel-xen-%{kernel_package_string}
 Requires(pre):   kernel-xen-%{kernel_package_string}
 BuildRequires:	SDL-devel
+BuildRequires:	libx11-devel
+BuildRequires:	gtk2-devel
 BuildRequires:	curl-devel
 Buildrequires:	dev86-devel
 BuildRequires:  libext2fs-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	libpython-devel >= 2.4
 BuildRequires:	zlib-devel
+BuildRequires:  pciutils-devel
+BuildRequires:  libidn-devel
+BuildRequires:  libaio-devel
+BuildRequires:  openssl-devel
+BuildRequires:  gettext
+# documentation
+BuildRequires:  ghostscript
+BuildRequires:  transfig
+BuildRequires:  texinfo
 BuildRequires:  tetex-latex
 BuildRequires:  tetex-texi2html
-BuildRequires:  pciutils-devel
-BuildRequires:  texinfo
 Obsoletes:      xen-uptodate
 Requires:       xen-hypervisor = %{version}
 BuildRoot:      %{_tmppath}/%{name}-%{version}
