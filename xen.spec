@@ -294,13 +294,13 @@ rm -rf %{buildroot}/etc/udev/rules.d/xen*.rules
 mv %{buildroot}/etc/udev/xen*.rules %{buildroot}/etc/udev/rules.d
 
 # init scripts
-install -d -m 755 %{buildroot}%{_sysconfdir}/rc.d/init.d
-mv %{buildroot}%{_sysconfdir}/init.d/* %{buildroot}%{_sysconfdir}/rc.d/init.d
+install -d -m 755 %{buildroot}%{_initrddir}
+mv %{buildroot}%{_sysconfdir}/init.d/* %{buildroot}%{_initrddir}
 rmdir %{buildroot}%{_sysconfdir}/init.d
-install -m 755 %{SOURCE20} %{buildroot}%{_sysconfdir}/rc.d/init.d/xenstored
-install -m 755 %{SOURCE21} %{buildroot}%{_sysconfdir}/rc.d/init.d/xenconsoled
-install -m 755 %{SOURCE22} %{buildroot}%{_sysconfdir}/rc.d/init.d/blktapctrl
-install -m 755 %{SOURCE23} %{buildroot}%{_sysconfdir}/rc.d/init.d/xend
+install -m 755 %{SOURCE20} %{buildroot}%{_initrddir}/xenstored
+install -m 755 %{SOURCE21} %{buildroot}%{_initrddir}/xenconsoled
+install -m 755 %{SOURCE22} %{buildroot}%{_initrddir}/blktapctrl
+install -m 755 %{SOURCE23} %{buildroot}%{_initrddir}/xend
 
 # sysconfig
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
