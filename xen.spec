@@ -71,10 +71,18 @@ BuildRequires:  tetex-texi2html
 BuildRequires:  pciutils-devel
 BuildRequires:  texinfo
 Obsoletes:      xen-uptodate
+Requires:       xen-hypervisor = %{version}
 BuildRoot:      %{_tmppath}/%{name}-%{version}
 
 %description 
 The basic tools for managing XEN virtual machines.
+
+%package hypervisor
+Summary: Libraries for Xen tools
+Group: System/Kernel and hardware
+
+%description hypervisor
+This package contains the Xen hypervisor
 
 %package doc
 Summary:    XEN documentation
@@ -367,7 +375,6 @@ rm -rf %{buildroot}
  # xend state
  {_localstatedir}/run/xend
  {_localstatedir}/run/xend/boot
-/boot/xen*
 # init scripts
 %{_initrddir}/xend
 %{_initrddir}/xendomains
@@ -421,6 +428,12 @@ rm -rf %{buildroot}
 %files -n kernel-xen-devel-%{kernel_package_string}
 %defattr(-,root,root)
 %{_prefix}/src/linux-%{kernel_file_string}
+
+%files hypervisor
+%defattr(-,root,root)
+/boot/xen-syms-*
+/boot/xen-*.gz
+/boot/xen.gz
 
 %files doc
 %defattr(-,root,root)
