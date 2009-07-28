@@ -315,10 +315,10 @@ grep -q "^CONFIG_SQUASHFS=m" %{buildroot}/boot/config-%{kernel_file_string} \
 %postun -n %{libname} -p /sbin/ldconfig
 %endif
 
-%post
+%post hypervisor
 /sbin/installkernel %{kernel_file_string}
 
-%preun
+%preun hypervisor
 /sbin/installkernel -R %{kernel_file_string}
 
 %post -n kernel-xen-devel-%{kernel_package_string}
