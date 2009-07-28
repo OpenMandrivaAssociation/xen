@@ -280,9 +280,6 @@ install -m 644 docs/pdf/* %{buildroot}%{_docdir}/%{name}
 
 # install state directory
 install -d -m 755 %{buildroot}%{_localstatedir}/lib/xend/{domains,state,storage}
-# symlink /var/lib/xend to allow live migration to work
-# https://bugs.launchpad.net/ubuntu/+source/xen-3.2/+bug/277132
-(cd %{buildroot}%{_localstatedir}/lib && rmdir xen && ln -sf xend xen)
 
 # install our own init scripts
 install -d -m 755 %{buildroot}%{_initrddir}
