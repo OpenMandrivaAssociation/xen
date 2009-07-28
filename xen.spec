@@ -207,7 +207,7 @@ make -C stubdom install-grub XEN_TARGET_ARCH=x86_32
 
 # remove additional kernel symlink
 rm -f %{buildroot}/boot/vmlinuz-2.6-xen-%{kernel_extra_version}
-rm -f %{buildroot}/boot/xen-3.3.gz
+rm -f %{buildroot}/boot/xen-3.4.gz
 rm -f %{buildroot}/boot/xen-3.gz
 
 # drop dangling symlinks
@@ -270,6 +270,11 @@ install -m 755 %{SOURCE4} %{buildroot}%{_initrddir}/xendomains
 # delete original ones
 rm -rf %{buildroot}%{_sysconfdir}/init.d
 
+# udev
+rm -rf %{buildroot}/etc/udev/rules.d/xen*.rules
+mv %{buildroot}/etc/udev/xen*.rules %{buildroot}/etc/udev/rules.d
+
+
 %check
 grep -q "^CONFIG_SQUASHFS=m" %{buildroot}/boot/config-%{kernel_file_string} \
     || exit 0
@@ -310,9 +315,7 @@ rm -rf %{buildroot}
 %{_docdir}/%{name}/README
 %config(noreplace) %{_sysconfdir}/sysconfig/xendomains
 %config(noreplace) %{_sysconfdir}/udev/rules.d/xen-backend.rules
-%config(noreplace) %{_sysconfdir}/udev/xen-backend.rules
 %config(noreplace) %{_sysconfdir}/udev/rules.d/xend.rules
-%config(noreplace) %{_sysconfdir}/udev/xend.rules
 %dir %{_sysconfdir}/xen
 %{_sysconfdir}/xen/scripts
 %{_sysconfdir}/xen/auto
