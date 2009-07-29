@@ -57,6 +57,9 @@ BuildRequires:  pciutils-devel
 BuildRequires:  libidn-devel
 BuildRequires:  libaio-devel
 BuildRequires:  openssl-devel
+BuildRequires:  gnutls-devel
+BuildRequires:  brlapi-devel
+BuildRequires:  vde-devel
 BuildRequires:  gettext
 # documentation
 BuildRequires:  ghostscript
