@@ -141,7 +141,6 @@ export pae=y
 %install
 rm -rf %{buildroot}
 export CFLAGS="$CFLAGS -fno-strict-aliasing"
-export DONT_GPRINTIFY=1
 export DESTDIR=%{buildroot}
 export pae=y
 make -C tools install HOTPLUGS=install-udev
