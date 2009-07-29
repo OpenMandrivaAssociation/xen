@@ -157,6 +157,12 @@ rm -f %{buildroot}/boot/xen-3.gz
 # remove unwanted firmware files
 rm -rf %{buildroot}/lib/firmware
 
+# remove pointless helper
+rm -f %{buildroot}%{_sbindir}/xen-python-path
+
+# remove  README's not intended for end users
+rm -f %{buildroot}/%{_sysconfdir}/xen/README*
+
 # fix man pages
 install -d -m 755 %{buildroot}%{_mandir}/man{1,5}
 install -m 644 docs/man1/* %{buildroot}%{_mandir}/man1
@@ -217,8 +223,6 @@ rm -rf %{buildroot}
 %{_sysconfdir}/xen/scripts
 %{_sysconfdir}/xen/auto
 %{_sysconfdir}/xen/qemu-ifup
-%{_sysconfdir}/xen/README
-%{_sysconfdir}/xen/README.incompatibilities
 %config(noreplace) %{_sysconfdir}/xen/*.sxp
 %config(noreplace) %{_sysconfdir}/xen/*.xml
 %config(noreplace) %{_sysconfdir}/xen/xmexample*
@@ -271,7 +275,6 @@ rm -rf %{buildroot}
 %{_sbindir}/qcow2raw
 %{_sbindir}/tapdisk
 %{_sbindir}/xentrace_setmask
-%{_sbindir}/xen-python-path
 %{_sbindir}/flask-loadpolicy
 %{_sbindir}/xsview
 %{_sbindir}/xenperf
