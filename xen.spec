@@ -1,20 +1,17 @@
-%define name                    xen
-%define xen_version             3.4.0
-%define rel                     2
-%define xen_release             %mkrel %rel
-%define major                   3.0
-%define libname                 %mklibname %{name} %{major}
-%define develname               %mklibname %{name} -d
+%define name        xen
+%define version     3.4.1
+%define release     %mkrel 1
+%define major       3.0
+%define libname     %mklibname %{name} %{major}
+%define develname   %mklibname %{name} -d
 
 Name:       %{name}
-Version:    %{xen_version}
-Release:    %{xen_release}
+Version:    %{version}
+Release:    %{release}
 Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
 License:    GPL
-Source0:    http://bits.xensource.com/oss-xen/release/%{version}/%{name}-%{version}-xen.tar.gz
-Source1:    linux-2.6.27-xen.hg.tar.bz2
-Source2:    buildconfigs.tar.bz2
+Source0:    http://bits.xensource.com/oss-xen/release/%{version}/%{name}-%{version}.tar.gz
 Source20:   init.xenstored 
 Source21:   init.xenconsoled
 Source22:   init.blktapctrl
@@ -30,7 +27,6 @@ Source14:   pciutils-2.2.9.tar.bz2
 Patch0:     xen-3.3.1-fix-stubdom-Makefile.patch
 # fedora patches
 Patch11:    xen-initscript.patch
-Patch12:    xen-fix-deprecated-warnings.patch
 Patch13:    xen-xenstore-cli.patch
 Patch14:    xen-dumpdir.patch
 Patch15:    xen-net-disable-iptables-on-bridge.patch
@@ -101,8 +97,8 @@ linked with Xen libraries.
 %package -n %{develname}
 Summary:    Static libraries and header files for %{name}
 Group:      Development/C
-Requires:   %{libname} = %{xen_version}-%{xen_release}
-Provides:   %{name}-devel = %{xen_version}-%{xen_release}
+Requires:   %{libname} = %{version}-%{release}
+Provides:   %{name}-devel = %{version}-%{release}
 Conflicts:  %name} < 3.1.0-5mdv2008.1
 
 %description -n %{develname}
@@ -110,11 +106,10 @@ This package contains the static development libraries and headers needed
 to compile applications linked with Xen libraries.
 
 %prep
-%setup -q -n %{name}-%{xen_version}
+%setup -q
 %patch0 -p 1
 
 %patch11 -p 1
-%patch12 -p 1
 %patch13 -p 1
 %patch14 -p 1
 %patch15 -p 1
@@ -128,7 +123,6 @@ cp %{SOURCE14} stubdom
 
 
 %build
-
 # clean all stuff
 export CFLAGS="$CFLAGS -fno-strict-aliasing"
 export HOSTCC="$HOSTCC -fno-strict-aliasing"
