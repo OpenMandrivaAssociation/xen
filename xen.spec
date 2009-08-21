@@ -26,6 +26,7 @@ Source13:   lwip-1.3.0.tar.gz
 Source14:   pciutils-2.2.9.tar.bz2
 Patch0:     xen-3.3.1-fix-stubdom-Makefile.patch
 # fedora patches
+Patch10:    xen-no-werror.patch
 Patch11:    xen-initscript.patch
 Patch13:    xen-xenstore-cli.patch
 Patch14:    xen-dumpdir.patch
@@ -109,6 +110,7 @@ to compile applications linked with Xen libraries.
 %setup -q
 %patch0 -p 1
 
+%patch10 -p 1
 %patch11 -p 1
 %patch13 -p 1
 %patch14 -p 1
@@ -124,28 +126,22 @@ cp %{SOURCE14} stubdom
 
 %build
 # clean all stuff
-export CFLAGS="$CFLAGS -fno-strict-aliasing"
-export HOSTCC="$HOSTCC -fno-strict-aliasing"
-export pae=y 
-%make -C tools HOTPLUGS=install-udev 
-%make -C xen 
-%make -C docs 
-%make -C stubdom
-%ifarch x86_64
-%make -C stubdom pv-grub XEN_TARGET_ARCH=x86_32
-%endif
+export CFLAGS="%{optflags}"
+%make prefix=/usr dist-xen
+%make prefix=/usr dist-tools
+make  prefix=/usr dist-docs
+unset CFLAGS
+make dist-stubdom
 
 %install
 rm -rf %{buildroot}
-export CFLAGS="$CFLAGS -fno-strict-aliasing"
-export DESTDIR=%{buildroot}
-export pae=y
-make -C tools install HOTPLUGS=install-udev
-make -C xen install
-make -C stubdom install
-%ifarch x86_64
-make -C stubdom install-grub XEN_TARGET_ARCH=x86_32
-%endif
+make DESTDIR=%{buildroot} prefix=/usr install-xen
+make DESTDIR=%{buildroot} prefix=/usr install-tools
+make DESTDIR=%{buildroot} prefix=/usr install-docs
+make DESTDIR=%{buildroot} prefix=/usr install-stubdom
+
+# stubdom: newlib
+rm -rf %{buildroot}/usr/*-xen-elf
 
 # remove additional kernel symlink
 rm -f %{buildroot}/boot/xen-3.4.gz
@@ -175,15 +171,15 @@ install -m 644 docs/pdf/* %{buildroot}%{_docdir}/%{name}
 # install state directory
 install -d -m 755 %{buildroot}%{_localstatedir}/lib/xend/{domains,state,storage}
 
-# delete original ones
-rm -rf %{buildroot}%{_sysconfdir}/init.d
-
 # udev
 rm -rf %{buildroot}/etc/udev/rules.d/xen*.rules
 mv %{buildroot}/etc/udev/xen*.rules %{buildroot}/etc/udev/rules.d
 
 # init scripts
 install -d -m 755 %{buildroot}%{_initrddir}
+mv %{buildroot}%{_sysconfdir}/init.d/* %{buildroot}%{_initrddir}
+rm -rf %{buildroot}%{_sysconfdir}/init.d
+
 install -m 755 %{SOURCE20} %{buildroot}%{_initrddir}/xenstored
 install -m 755 %{SOURCE21} %{buildroot}%{_initrddir}/xenconsoled
 install -m 755 %{SOURCE22} %{buildroot}%{_initrddir}/blktapctrl
@@ -194,6 +190,9 @@ mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
 install -m 644 %{SOURCE30} %{buildroot}%{_sysconfdir}/sysconfig/xenstored
 install -m 644 %{SOURCE31} %{buildroot}%{_sysconfdir}/sysconfig/xenconsoled
 install -m 644 %{SOURCE32} %{buildroot}%{_sysconfdir}/sysconfig/blktapctrl
+
+# standard gnu info files
+rm -rf %{buildroot}/usr/info
 
 %if %mdkversion < 200900
 %post -n %{libname} -p /sbin/ldconfig
