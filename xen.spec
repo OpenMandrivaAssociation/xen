@@ -1,6 +1,6 @@
 %define name        xen
 %define version     3.4.1
-%define release     %mkrel 1
+%define release     %mkrel 2
 %define major       3.0
 %define libname     %mklibname %{name} %{major}
 %define develname   %mklibname %{name} -d
@@ -56,7 +56,9 @@ BuildRequires:  libaio-devel
 BuildRequires:  openssl-devel
 BuildRequires:  gnutls-devel
 BuildRequires:  brlapi-devel
+%if %if %{mdkversion} >= 201000
 BuildRequires:  vde-devel
+%endif
 BuildRequires:  gettext
 # documentation
 BuildRequires:  ghostscript
