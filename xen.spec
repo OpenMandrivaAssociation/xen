@@ -1,6 +1,6 @@
 %define name        xen
 %define version     3.4.1
-%define release     %mkrel 2
+%define release     %mkrel 3
 %define major       3.0
 %define libname     %mklibname %{name} %{major}
 %define develname   %mklibname %{name} -d
@@ -52,12 +52,12 @@ BuildRequires:  libpython-devel >= 2.4
 BuildRequires:  zlib-devel
 BuildRequires:  pciutils-devel
 BuildRequires:  libidn-devel
-BuildRequires:  libaio-devel
 BuildRequires:  openssl-devel
 BuildRequires:  gnutls-devel
 BuildRequires:  brlapi-devel
 %if %{mdkversion} >= 201000
 BuildRequires:  vde-devel
+BuildRequires:  libaio-devel
 %endif
 BuildRequires:  gettext
 # documentation
