@@ -56,7 +56,7 @@ BuildRequires:  libaio-devel
 BuildRequires:  openssl-devel
 BuildRequires:  gnutls-devel
 BuildRequires:  brlapi-devel
-%if %if %{mdkversion} >= 201000
+%if %{mdkversion} >= 201000
 BuildRequires:  vde-devel
 %endif
 BuildRequires:  gettext
