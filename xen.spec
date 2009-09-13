@@ -12,6 +12,13 @@ Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
 License:    GPL
 Source0:    http://bits.xensource.com/oss-xen/release/%{version}/%{name}-%{version}.tar.gz
+# stubdoms
+Source10:   zlib-1.2.3.tar.gz
+Source11:   newlib-1.16.0.tar.gz
+Source12:   grub-0.97.tar.gz
+Source13:   lwip-1.3.0.tar.gz
+Source14:   pciutils-2.2.9.tar.bz2
+# initscripts
 Source20:   init.xenstored 
 Source21:   init.xenconsoled
 Source22:   init.blktapctrl
@@ -19,18 +26,17 @@ Source23:   init.xend
 Source30:   sysconfig.xenstored
 Source31:   sysconfig.xenconsoled
 Source32:   sysconfig.blktapctrl
-Source10:   zlib-1.2.3.tar.gz
-Source11:   newlib-1.16.0.tar.gz
-Source12:   grub-0.97.tar.gz
-Source13:   lwip-1.3.0.tar.gz
-Source14:   pciutils-2.2.9.tar.bz2
 Patch0:     xen-3.3.1-fix-stubdom-Makefile.patch
 # fedora patches
-Patch10:    xen-no-werror.patch
-Patch11:    xen-initscript.patch
-Patch13:    xen-xenstore-cli.patch
-Patch14:    xen-dumpdir.patch
-Patch15:    xen-net-disable-iptables-on-bridge.patch
+Patch1:    xen-initscript.patch
+Patch3:    xen-xenstore-cli.patch
+Patch4:    xen-dumpdir.patch
+Patch5:    xen-net-disable-iptables-on-bridge.patch
+Patch10:   xen-no-werror.patch
+Patch20:   xen-pygrub-fix-timeout-0.patch
+Patch21:   xen-qemu-dm-fix-block-memory-leak.patch
+Patch22:   xen-fix-videoram-option.patch
+Patch23:   xen-341-add-bzip2-lzma-pv-bootloader-support-v2.patch
 Requires:   python
 Requires:   python-twisted-core
 Requires:   python-pyxml
@@ -39,8 +45,8 @@ Requires:   iptables
 Requires:   bridge-utils
 Requires:   glibc-xen
 Requires:   grub
-Requires:   kernel-xen-%{kernel_package_string}
-Requires(pre):   kernel-xen-%{kernel_package_string}
+Requires:   kernel-xen
+Requires(pre):   kernel-xen
 BuildRequires:  SDL-devel
 BuildRequires:  libx11-devel
 BuildRequires:  gtk2-devel
@@ -50,6 +56,8 @@ BuildRequires:  libext2fs-devel
 BuildRequires:  ncurses-devel
 BuildRequires:  libpython-devel >= 2.4
 BuildRequires:  zlib-devel
+BuildRequires:  bzip2-devel
+BuildRequires:  lzma-devel
 BuildRequires:  pciutils-devel
 BuildRequires:  libidn-devel
 BuildRequires:  openssl-devel
@@ -112,11 +120,15 @@ to compile applications linked with Xen libraries.
 %setup -q
 %patch0 -p 1
 
+%patch1 -p 1
+%patch3 -p 1
+%patch4 -p 1
+%patch5 -p 1
 %patch10 -p 1
-%patch11 -p 1
-%patch13 -p 1
-%patch14 -p 1
-%patch15 -p 1
+%patch20 -p 1
+%patch21 -p 1
+%patch22 -p 1
+%patch23 -p 1
 
 # install additional sources
 cp %{SOURCE10} stubdom
