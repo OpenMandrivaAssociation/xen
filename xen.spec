@@ -1,6 +1,6 @@
 %define name        xen
 %define version     3.4.1
-%define release     %mkrel 5
+%define release     %mkrel 6
 %define major       3.0
 %define libname     %mklibname %{name} %{major}
 %define develname   %mklibname %{name} -d
@@ -215,12 +215,6 @@ rm -rf %{buildroot}/usr/info
 %if %mdkversion < 200900
 %postun -n %{libname} -p /sbin/ldconfig
 %endif
-
-%post hypervisor
-/sbin/installkernel %{kernel_file_string}
-
-%preun hypervisor
-/sbin/installkernel -R %{kernel_file_string}
 
 %clean
 rm -rf %{buildroot}
