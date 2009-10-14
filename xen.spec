@@ -37,6 +37,11 @@ Patch20:   xen-pygrub-fix-timeout-0.patch
 Patch21:   xen-qemu-dm-fix-block-memory-leak.patch
 Patch22:   xen-fix-videoram-option.patch
 Patch23:   xen-341-add-bzip2-lzma-pv-bootloader-support-v2.patch
+Patch5:	    xen-build.patch
+Patch6:	    kmalloc_node_track_caller.patch
+Patch7:     ixgbe_dcb_nl.patch
+Patch8:	    sata_sil.patch
+Patch9:     time_32.patch
 Requires:   python
 Requires:   python-twisted-core
 Requires:   python-pyxml
@@ -46,7 +51,6 @@ Requires:   bridge-utils
 Requires:   glibc-xen
 Requires:   grub
 Requires:   kernel-xen
-Requires(pre):   kernel-xen
 BuildRequires:  SDL-devel
 BuildRequires:  libx11-devel
 BuildRequires:  gtk2-devel
@@ -111,7 +115,7 @@ Summary:    Static libraries and header files for %{name}
 Group:      Development/C
 Requires:   %{libname} = %{version}-%{release}
 Provides:   %{name}-devel = %{version}-%{release}
-Conflicts:  %name} < 3.1.0-5mdv2008.1
+Conflicts:  %{name} < 3.1.0-5mdv2008.1
 
 %description -n %{develname}
 This package contains the static development libraries and headers needed
@@ -121,9 +125,11 @@ to compile applications linked with Xen libraries.
 %setup -q
 %patch0 -p 1
 
-%patch1 -p 1
-%patch3 -p 1
-%patch4 -p 1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+#%patch4 -p 1
 %patch5 -p 1
 %patch10 -p 1
 %patch20 -p 1
