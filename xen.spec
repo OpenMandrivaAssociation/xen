@@ -46,6 +46,7 @@ Requires:   bridge-utils
 Requires:   glibc-xen
 Requires:   grub
 Requires:   kernel-xen
+Requires:   %{libname} = %{version}-%{release}
 BuildRequires:  SDL-devel
 BuildRequires:  libx11-devel
 BuildRequires:  gtk2-devel
