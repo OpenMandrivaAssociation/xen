@@ -205,6 +205,17 @@ install -m 644 %{SOURCE30} %{buildroot}%{_sysconfdir}/sysconfig/xenstored
 install -m 644 %{SOURCE31} %{buildroot}%{_sysconfdir}/sysconfig/xenconsoled
 install -m 644 %{SOURCE32} %{buildroot}%{_sysconfdir}/sysconfig/blktapctrl
 
+# logrotate
+mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d
+cat > %{buildroot}%{_sysconfdir}/logrotate.d/xen <<EOF
+/var/log/xen/xend-debug.log /var/log/xen/xen-hotplug.log
+/var/log/xen/domain-builder-ng.log {
+    notifempty
+    missingok
+    copytruncate
+}
+EOF
+
 # standard gnu info files
 rm -rf %{buildroot}/usr/info
 
@@ -263,6 +274,7 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/sysconfig/blktapctrl
 %config(noreplace) %{_sysconfdir}/sysconfig/xenstored
 %config(noreplace) %{_sysconfdir}/sysconfig/xenconsoled
+%config(noreplace) %{_sysconfdir}/logrotate.d/xen
 
 %{_sbindir}/fs-backend
 %{_sbindir}/xenstored
