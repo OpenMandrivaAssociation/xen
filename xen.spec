@@ -1,6 +1,6 @@
 %define name        xen
 %define version     3.4.1
-%define release     %mkrel 6
+%define release     %mkrel 7
 %define major       3.0
 %define libname     %mklibname %{name} %{major}
 %define develname   %mklibname %{name} -d
