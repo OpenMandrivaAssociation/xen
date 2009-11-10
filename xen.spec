@@ -1,6 +1,6 @@
 %define name        xen
-%define version     3.4.1
-%define release     %mkrel 7
+%define version     3.4.2
+%define release     %mkrel 1
 %define major       3.0
 %define libname     %mklibname %{name} %{major}
 %define develname   %mklibname %{name} -d
@@ -33,10 +33,6 @@ Patch3:    xen-xenstore-cli.patch
 Patch4:    xen-dumpdir.patch
 Patch5:    xen-net-disable-iptables-on-bridge.patch
 Patch10:   xen-no-werror.patch
-Patch20:   xen-pygrub-fix-timeout-0.patch
-Patch21:   xen-qemu-dm-fix-block-memory-leak.patch
-Patch22:   xen-fix-videoram-option.patch
-Patch23:   xen-341-add-bzip2-lzma-pv-bootloader-support-v2.patch
 Requires:   python
 Requires:   python-twisted-core
 Requires:   python-pyxml
@@ -125,10 +121,6 @@ to compile applications linked with Xen libraries.
 %patch4 -p 1
 %patch5 -p 1
 %patch10 -p 1
-%patch20 -p 1
-%patch21 -p 1
-%patch22 -p 1
-%patch23 -p 1
 
 # install additional sources
 cp %{SOURCE10} stubdom
