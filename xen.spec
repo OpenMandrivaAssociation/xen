@@ -1,6 +1,6 @@
 %define name        xen
 %define version     3.4.2
-%define release     %mkrel 1
+%define release     %mkrel 2
 %define major       3.0
 %define libname     %mklibname %{name} %{major}
 %define develname   %mklibname %{name} -d
@@ -12,6 +12,7 @@ Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
 License:    GPL
 Source0:    http://bits.xensource.com/oss-xen/release/%{version}/%{name}-%{version}.tar.gz
+Source1:    %{name}.modules
 # stubdoms
 Source10:   zlib-1.2.3.tar.gz
 Source11:   newlib-1.16.0.tar.gz
@@ -197,6 +198,10 @@ install -m 644 %{SOURCE30} %{buildroot}%{_sysconfdir}/sysconfig/xenstored
 install -m 644 %{SOURCE31} %{buildroot}%{_sysconfdir}/sysconfig/xenconsoled
 install -m 644 %{SOURCE32} %{buildroot}%{_sysconfdir}/sysconfig/blktapctrl
 
+mkdir -p %{buildroot}%{_sysconfdir}/sysconfig/modules
+install -m 644 %{SOURCE1} \
+    %{buildroot}%{_sysconfdir}/sysconfig/modules/%{name}.modules 
+
 # logrotate
 mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d
 cat > %{buildroot}%{_sysconfdir}/logrotate.d/xen <<EOF
@@ -210,6 +215,9 @@ EOF
 
 # standard gnu info files
 rm -rf %{buildroot}/usr/info
+
+# gprintify has a bug handling some constructs in xendomain
+export DONT_GPRINTIFY=1
 
 %if %mdkversion < 200900
 %post -n %{libname} -p /sbin/ldconfig
@@ -266,8 +274,8 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/sysconfig/blktapctrl
 %config(noreplace) %{_sysconfdir}/sysconfig/xenstored
 %config(noreplace) %{_sysconfdir}/sysconfig/xenconsoled
+%config(noreplace) %{_sysconfdir}/sysconfig/modules/xen.modules
 %config(noreplace) %{_sysconfdir}/logrotate.d/xen
-
 %{_sbindir}/fs-backend
 %{_sbindir}/xenstored
 %{_sbindir}/xm
