@@ -199,7 +199,7 @@ install -m 644 %{SOURCE31} %{buildroot}%{_sysconfdir}/sysconfig/xenconsoled
 install -m 644 %{SOURCE32} %{buildroot}%{_sysconfdir}/sysconfig/blktapctrl
 
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig/modules
-install -m 644 %{SOURCE1} \
+install -m 755 %{SOURCE1} \
     %{buildroot}%{_sysconfdir}/sysconfig/modules/%{name}.modules 
 
 # logrotate
@@ -270,11 +270,11 @@ rm -rf %{buildroot}
 %{_initrddir}/blktapctrl
 %{_initrddir}/xenstored
 %{_initrddir}/xenconsoled
+%{_sysconfdir}/sysconfig/modules/xen.modules
 %config(noreplace) %{_sysconfdir}/sysconfig/xendomains
 %config(noreplace) %{_sysconfdir}/sysconfig/blktapctrl
 %config(noreplace) %{_sysconfdir}/sysconfig/xenstored
 %config(noreplace) %{_sysconfdir}/sysconfig/xenconsoled
-%config(noreplace) %{_sysconfdir}/sysconfig/modules/xen.modules
 %config(noreplace) %{_sysconfdir}/logrotate.d/xen
 %{_sbindir}/fs-backend
 %{_sbindir}/xenstored
