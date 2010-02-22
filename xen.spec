@@ -1,6 +1,7 @@
 %define name        xen
-%define version     3.4.2
-%define release     %mkrel 2
+%define version     4.0
+%define beta        rc4
+%define release     %mkrel 0.%{beta}.1
 %define major       3.0
 %define libname     %mklibname %{name} %{major}
 %define develname   %mklibname %{name} -d
@@ -11,14 +12,17 @@ Release:    %{release}
 Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
 License:    GPL
-Source0:    http://bits.xensource.com/oss-xen/release/%{version}/%{name}-%{version}.tar.gz
+Source0:    http://bits.xensource.com/oss-xen/release/%{version}/%{name}-%{version}-%{beta}.tar.bz2
 Source1:    %{name}.modules
+Source2:    qemu-xen-4.0.0-rc4.tar.gz
+Source3:    http://www.hyperrealm.com/libconfig/libconfig-1.3.2.tar.gz
 # stubdoms
 Source10:   zlib-1.2.3.tar.gz
 Source11:   newlib-1.16.0.tar.gz
 Source12:   grub-0.97.tar.gz
 Source13:   lwip-1.3.0.tar.gz
 Source14:   pciutils-2.2.9.tar.bz2
+Source15:   ocaml-3.11.0.tar.gz
 # initscripts
 Source20:   init.xenstored 
 Source21:   init.xenconsoled
@@ -34,6 +38,8 @@ Patch3:    xen-xenstore-cli.patch
 Patch4:    xen-dumpdir.patch
 Patch5:    xen-net-disable-iptables-on-bridge.patch
 Patch10:   xen-no-werror.patch
+Patch20:   xen-unstable.hg-use-external-libconfig.patch
+Patch21:   xen-unstable.hg-fix-dtd-location.patch
 Requires:   python
 Requires:   python-twisted-core
 Requires:   python-pyxml
@@ -66,6 +72,7 @@ BuildRequires:  vde-devel
 BuildRequires:  libaio-devel
 %endif
 BuildRequires:  gettext
+BuildRequires:  libconfig-devel
 # documentation
 BuildRequires:  ghostscript
 BuildRequires:  transfig
@@ -115,21 +122,26 @@ This package contains the static development libraries and headers needed
 to compile applications linked with Xen libraries.
 
 %prep
-%setup -q
+%setup -q -n xen-unstable.hg
 %patch0 -p 1
-%patch1 -p 1
+#%patch1 -p 1
 %patch3 -p 1
-%patch4 -p 1
+#%patch4 -p 1
 %patch5 -p 1
 %patch10 -p 1
+%patch20 -p 1
+%patch21 -p 1
 
-# install additional sources
+# stub domain
 cp %{SOURCE10} stubdom
 cp %{SOURCE11} stubdom
 cp %{SOURCE12} stubdom
 cp %{SOURCE13} stubdom
 cp %{SOURCE14} stubdom
+cp %{SOURCE15} stubdom
 
+# qemu
+tar xf %{SOURCE2} -C tools
 
 %build
 # clean all stuff
@@ -237,7 +249,6 @@ rm -rf %{buildroot}
 %dir %{_sysconfdir}/xen
 %{_sysconfdir}/xen/scripts
 %{_sysconfdir}/xen/auto
-%{_sysconfdir}/xen/qemu-ifup
 %config(noreplace) %{_sysconfdir}/xen/*.sxp
 %config(noreplace) %{_sysconfdir}/xen/*.xml
 %config(noreplace) %{_sysconfdir}/xen/xmexample*
@@ -275,6 +286,7 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/sysconfig/blktapctrl
 %config(noreplace) %{_sysconfdir}/sysconfig/xenstored
 %config(noreplace) %{_sysconfdir}/sysconfig/xenconsoled
+%config(noreplace) %{_sysconfdir}/sysconfig/xend
 %config(noreplace) %{_sysconfdir}/logrotate.d/xen
 %{_sbindir}/fs-backend
 %{_sbindir}/xenstored
@@ -296,16 +308,35 @@ rm -rf %{buildroot}
 %{_sbindir}/xenperf
 %{_sbindir}/xenpm
 %{_sbindir}/xenpmd
+%{_sbindir}/flask-getenforce
+%{_sbindir}/flask-setenforce
+%{_sbindir}/gtracestat
+%{_sbindir}/gtraceview
+%{_sbindir}/lock-util
+%{_sbindir}/tapdisk-client
+%{_sbindir}/tapdisk-diff
+%{_sbindir}/tapdisk-stream
+%{_sbindir}/tapdisk2
+%{_sbindir}/td-util
+%{_sbindir}/vhd-update
+%{_sbindir}/vhd-util
+%{_sbindir}/xen-hvmctx
+%{_sbindir}/xen-tmem-list-parse
+%{_sbindir}/xenlockprof
+%{_sbindir}/xenpaging
+%{_sbindir}/xl
 %{_bindir}/xencons
 %{_bindir}/xentrace
 %{_bindir}/xentrace_format
 %{_bindir}/xentrace_setsize
 %{_bindir}/xenstore-*
 %{_bindir}/pygrub
+%{_bindir}/remus
 %{_bindir}/xen-detect
 %{_bindir}/qemu-img-xen
 %{_bindir}/qemu-nbd-xen
 %{_bindir}/xenstore
+%{_datadir}/xen
 
 %files hypervisor
 %defattr(-,root,root)
