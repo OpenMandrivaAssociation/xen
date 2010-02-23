@@ -68,6 +68,7 @@ BuildRequires:  gnutls-devel
 BuildRequires:  brlapi-devel
 BuildRequires:  e2fsprogs-devel
 BuildRequires:  libuuid-devel
+BuildRequires:  iasl
 %if %{mdkversion} >= 201000
 BuildRequires:  vde-devel
 BuildRequires:  libaio-devel
