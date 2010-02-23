@@ -67,7 +67,7 @@ BuildRequires:  openssl-devel
 BuildRequires:  gnutls-devel
 BuildRequires:  brlapi-devel
 BuildRequires:  e2fsprogs-devel
-BuildRequires:  uuid-devel
+BuildRequires:  libuuid-devel
 %if %{mdkversion} >= 201000
 BuildRequires:  vde-devel
 BuildRequires:  libaio-devel
