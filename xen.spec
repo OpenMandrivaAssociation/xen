@@ -1,6 +1,6 @@
 %define name        xen
 %define version     4.0
-%define beta        rc4
+%define beta        rc5
 %define release     %mkrel 0.%{beta}.1
 %define major       3.0
 %define libname     %mklibname %{name} %{major}
@@ -39,7 +39,6 @@ Patch4:    xen-dumpdir.patch
 Patch5:    xen-net-disable-iptables-on-bridge.patch
 Patch10:   xen-no-werror.patch
 Patch20:   xen-unstable.hg-use-external-libconfig.patch
-Patch21:   xen-unstable.hg-fix-dtd-location.patch
 Requires:   python
 Requires:   python-twisted-core
 Requires:   python-pyxml
@@ -132,7 +131,6 @@ to compile applications linked with Xen libraries.
 %patch5 -p 1
 %patch10 -p 1
 %patch20 -p 1
-%patch21 -p 1
 
 # stub domain
 cp %{SOURCE10} stubdom
