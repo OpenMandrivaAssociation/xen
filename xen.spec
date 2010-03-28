@@ -1,6 +1,6 @@
 %define name        xen
 %define version     4.0
-%define beta        rc6
+%define beta        rc8
 %define release     %mkrel 0.%{beta}.1
 %define major       3.0
 %define libname     %mklibname %{name} %{major}
@@ -33,9 +33,7 @@ Source31:   sysconfig.xenconsoled
 Source32:   sysconfig.blktapctrl
 Patch0:     xen-3.3.1-fix-stubdom-Makefile.patch
 # fedora patches
-Patch1:    xen-initscript.patch
 Patch3:    xen-xenstore-cli.patch
-Patch4:    xen-dumpdir.patch
 Patch5:    xen-net-disable-iptables-on-bridge.patch
 Patch10:   xen-no-werror.patch
 Requires:   python
@@ -124,9 +122,7 @@ to compile applications linked with Xen libraries.
 %prep
 %setup -q -n xen-unstable.hg
 %patch0 -p 1
-#%patch1 -p 1
 %patch3 -p 1
-#%patch4 -p 1
 %patch5 -p 1
 %patch10 -p 1
 
