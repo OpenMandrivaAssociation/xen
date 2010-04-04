@@ -1,6 +1,6 @@
 %define name        xen
 %define version     4.0
-%define beta        rc8
+%define beta        rc9
 %define release     %mkrel 0.%{beta}.1
 %define major       3.0
 %define libname     %mklibname %{name} %{major}
@@ -120,7 +120,7 @@ This package contains the static development libraries and headers needed
 to compile applications linked with Xen libraries.
 
 %prep
-%setup -q -n xen-unstable.hg
+%setup -q -n xen-4.0-testing.hg
 %patch0 -p 1
 %patch3 -p 1
 %patch5 -p 1
