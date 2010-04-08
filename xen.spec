@@ -1,7 +1,6 @@
 %define name        xen
-%define version     4.0
-%define beta        rc9
-%define release     %mkrel 0.%{beta}.1
+%define version     4.0.0
+%define release     1
 %define major       3.0
 %define libname     %mklibname %{name} %{major}
 %define develname   %mklibname %{name} -d
@@ -12,7 +11,7 @@ Release:    %{release}
 Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
 License:    GPL
-Source0:    http://bits.xensource.com/oss-xen/release/%{version}/%{name}-%{version}-%{beta}.tar.bz2
+Source0:    http://bits.xensource.com/oss-xen/release/%{version}/%{name}-%{version}.tar.gz
 Source1:    %{name}.modules
 Source2:    qemu-xen-4.0.0-rc4.tar.gz
 Source3:    http://www.hyperrealm.com/libconfig/libconfig-1.3.2.tar.gz
@@ -120,7 +119,7 @@ This package contains the static development libraries and headers needed
 to compile applications linked with Xen libraries.
 
 %prep
-%setup -q -n xen-4.0-testing.hg
+%setup -q
 %patch0 -p 1
 %patch3 -p 1
 %patch5 -p 1
