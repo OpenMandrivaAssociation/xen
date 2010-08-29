@@ -1,5 +1,5 @@
 %define name        xen
-%define version     4.0.0
+%define version     4.0.1
 %define release     %mkrel 1
 %define major       3.0
 %define libname     %mklibname %{name} %{major}
@@ -30,11 +30,12 @@ Source23:   init.xend
 Source30:   sysconfig.xenstored
 Source31:   sysconfig.xenconsoled
 Source32:   sysconfig.blktapctrl
-Patch0:     xen-3.3.1-fix-stubdom-Makefile.patch
+Patch0:     xen-4.0.1-fix-stubdom-Makefile.patch
 # fedora patches
 Patch3:    xen-xenstore-cli.patch
 Patch5:    xen-net-disable-iptables-on-bridge.patch
 Patch10:   xen-no-werror.patch
+Patch11:   xen-4.0.1-gcc45.patch
 Requires:   python
 Requires:   python-twisted-core
 Requires:   python-pyxml
@@ -124,6 +125,7 @@ to compile applications linked with Xen libraries.
 %patch3 -p 1
 %patch5 -p 1
 %patch10 -p 1
+%patch11 -p 1
 
 # stub domain
 cp %{SOURCE10} stubdom
@@ -238,6 +240,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %dir %{_docdir}/%{name}
 %{_docdir}/%{name}/README
+%{_sysconfdir}/bash_completion.d/xl.sh
 %config(noreplace) %{_sysconfdir}/udev/rules.d/*
 %dir %{_sysconfdir}/xen
 %{_sysconfdir}/xen/scripts
@@ -318,6 +321,7 @@ rm -rf %{buildroot}
 %{_sbindir}/xenlockprof
 %{_sbindir}/xenpaging
 %{_sbindir}/xl
+%{_sbindir}/gdbsx
 %{_bindir}/xencons
 %{_bindir}/xentrace
 %{_bindir}/xentrace_format
@@ -329,7 +333,6 @@ rm -rf %{buildroot}
 %{_bindir}/qemu-img-xen
 %{_bindir}/qemu-nbd-xen
 %{_bindir}/xenstore
-%{_datadir}/xen
 
 %files hypervisor
 %defattr(-,root,root)
