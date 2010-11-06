@@ -36,6 +36,8 @@ Patch3:    xen-xenstore-cli.patch
 Patch5:    xen-net-disable-iptables-on-bridge.patch
 Patch10:   xen-no-werror.patch
 Patch11:   xen-4.0.1-gcc45.patch
+Patch12:   xen-4.0.1-gcc451.patch
+Patch13:   xen-4.0.1-py2.7.patch
 Requires:   python
 Requires:   python-twisted-core
 Requires:   python-pyxml
@@ -126,6 +128,8 @@ to compile applications linked with Xen libraries.
 %patch5 -p 1
 %patch10 -p 1
 %patch11 -p 1
+%patch12 -p1
+%patch13 -p1
 
 # stub domain
 cp %{SOURCE10} stubdom
