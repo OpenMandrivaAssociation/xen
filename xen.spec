@@ -1,6 +1,6 @@
 %define name        xen
-%define version     4.0.1
-%define release     %mkrel 3
+%define version     4.1.0
+%define release     %mkrel 1
 %define major       3.0
 %define libname     %mklibname %{name} %{major}
 %define develname   %mklibname %{name} -d
@@ -66,6 +66,8 @@ BuildRequires:  gnutls-devel
 BuildRequires:  brlapi-devel
 BuildRequires:  e2fsprogs-devel
 BuildRequires:  libuuid-devel
+BuildRequires:  ocaml
+BuildRequires:  ocaml-findlib-devel
 BuildRequires:  iasl
 %if %{mdkversion} >= 201000
 BuildRequires:  vde-devel
@@ -85,6 +87,13 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}
 
 %description 
 The basic tools for managing XEN virtual machines.
+
+%package ocaml
+Summary: OCaml bindings for Xen
+Group: Development/Other
+
+%description ocaml
+This package contains the Ocaml bindings for Xen
 
 %package hypervisor
 Summary: Libraries for Xen tools
@@ -124,12 +133,12 @@ to compile applications linked with Xen libraries.
 %prep
 %setup -q
 %patch0 -p 1
-%patch3 -p 1
-%patch5 -p 1
+#patch3 -p 1
+#patch5 -p 1
 %patch10 -p 1
-%patch11 -p 1
+#patch11 -p 1
 %patch12 -p1
-%patch13 -p1
+#patch13 -p1
 
 # stub domain
 cp %{SOURCE10} stubdom
@@ -190,13 +199,13 @@ install -m 644 docs/pdf/* %{buildroot}%{_docdir}/%{name}
 install -d -m 755 %{buildroot}%{_localstatedir}/lib/xend/{domains,state,storage}
 
 # udev
-rm -rf %{buildroot}/etc/udev/rules.d/xen*.rules
-mv %{buildroot}/etc/udev/xen*.rules %{buildroot}/etc/udev/rules.d
+#rm -rf %{buildroot}/etc/udev/rules.d/xen*.rules
+#mv %{buildroot}/etc/udev/xen*.rules %{buildroot}/etc/udev/rules.d
 
 # init scripts
-install -d -m 755 %{buildroot}%{_initrddir}
-mv %{buildroot}%{_sysconfdir}/init.d/* %{buildroot}%{_initrddir}
-rm -rf %{buildroot}%{_sysconfdir}/init.d
+#install -d -m 755 %{buildroot}%{_initrddir}
+#mv %{buildroot}%{_sysconfdir}/init.d/* %{buildroot}%{_initrddir}
+#rm -rf %{buildroot}%{_sysconfdir}/init.d
 
 install -m 755 %{SOURCE20} %{buildroot}%{_initrddir}/xenstored
 install -m 755 %{SOURCE21} %{buildroot}%{_initrddir}/xenconsoled
@@ -252,6 +261,8 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/xen/*.sxp
 %config(noreplace) %{_sysconfdir}/xen/*.xml
 %config(noreplace) %{_sysconfdir}/xen/xmexample*
+%config(noreplace) %{_sysconfdir}/xen/cpupool
+%config(noreplace) %{_sysconfdir}/xen/xl.conf
 %{_mandir}/man*/*
 %{_libdir}/xen
 %if "%{_lib}" != "lib"
@@ -281,14 +292,15 @@ rm -rf %{buildroot}
 %{_initrddir}/blktapctrl
 %{_initrddir}/xenstored
 %{_initrddir}/xenconsoled
+%{_initrddir}/xen-watchdog
+%{_initrddir}/xencommons
 %{_sysconfdir}/sysconfig/modules/xen.modules
 %config(noreplace) %{_sysconfdir}/sysconfig/xendomains
 %config(noreplace) %{_sysconfdir}/sysconfig/blktapctrl
 %config(noreplace) %{_sysconfdir}/sysconfig/xenstored
 %config(noreplace) %{_sysconfdir}/sysconfig/xenconsoled
-%config(noreplace) %{_sysconfdir}/sysconfig/xend
+%config(noreplace) %{_sysconfdir}/sysconfig/xencommons
 %config(noreplace) %{_sysconfdir}/logrotate.d/xen
-%{_sbindir}/fs-backend
 %{_sbindir}/xenstored
 %{_sbindir}/xm
 %{_sbindir}/xend
@@ -326,6 +338,12 @@ rm -rf %{buildroot}
 %{_sbindir}/xenpaging
 %{_sbindir}/xl
 %{_sbindir}/gdbsx
+%{_sbindir}/kdd
+%{_sbindir}/oxenstored
+%{_sbindir}/tap-ctl
+%{_sbindir}/xen-hptool
+%{_sbindir}/xen-hvmcrash
+%{_sbindir}/xenwatchdogd
 %{_bindir}/xencons
 %{_bindir}/xentrace
 %{_bindir}/xentrace_format
@@ -337,6 +355,18 @@ rm -rf %{buildroot}
 %{_bindir}/qemu-img-xen
 %{_bindir}/qemu-nbd-xen
 %{_bindir}/xenstore
+
+
+%files ocaml
+%defattr(-,root,root)
+%{_libdir}/ocaml/eventchn
+%{_libdir}/ocaml/mmap
+%{_libdir}/ocaml/log
+%{_libdir}/ocaml/uuid
+%{_libdir}/ocaml/xb
+%{_libdir}/ocaml/xc
+%{_libdir}/ocaml/xl
+%{_libdir}/ocaml/xs
 
 %files hypervisor
 %defattr(-,root,root)
