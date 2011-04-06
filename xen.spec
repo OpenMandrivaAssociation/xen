@@ -22,6 +22,7 @@ Source12:   grub-0.97.tar.gz
 Source13:   lwip-1.3.0.tar.gz
 Source14:   pciutils-2.2.9.tar.bz2
 Source15:   ocaml-3.11.0.tar.gz
+Source16:   ipxe-git-v1.0.0.tar.gz
 # initscripts
 Source20:   init.xenstored 
 Source21:   init.xenconsoled
@@ -147,6 +148,8 @@ cp %{SOURCE12} stubdom
 cp %{SOURCE13} stubdom
 cp %{SOURCE14} stubdom
 cp %{SOURCE15} stubdom
+
+cp %{SOURCE16} tools/firmware/etherboot/ipxe.tar.gz
 
 # qemu
 tar xf %{SOURCE2} -C tools
