@@ -81,7 +81,9 @@ BuildRequires:  ghostscript
 BuildRequires:  transfig
 BuildRequires:  texinfo
 BuildRequires:  tetex-latex
+%if %{mdkversion} <= 201010
 BuildRequires:  tetex-texi2html
+%endif
 Obsoletes:      xen-uptodate
 Requires:       xen-hypervisor = %{version}
 BuildRoot:      %{_tmppath}/%{name}-%{version}
