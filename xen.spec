@@ -190,8 +190,8 @@ rm -f %{buildroot}/%{_sysconfdir}/xen/README*
 
 # fix man pages
 install -d -m 755 %{buildroot}%{_mandir}/man{1,5}
-install -m 644 docs/man1/* %{buildroot}%{_mandir}/man1
-install -m 644 docs/man5/* %{buildroot}%{_mandir}/man5
+#install -m 644 docs/man1/* %{buildroot}%{_mandir}/man1
+#install -m 644 docs/man5/* %{buildroot}%{_mandir}/man5
 
 # install doc manually
 rm -rf %{buildroot}%{_docdir}/qemu
