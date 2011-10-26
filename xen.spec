@@ -198,7 +198,7 @@ rm -rf %{buildroot}%{_docdir}/qemu
 install -d -m 755 %{buildroot}%{_docdir}/%{name}
 install -m 644 README %{buildroot}%{_docdir}/%{name}
 install -m 644 docs/ps/* %{buildroot}%{_docdir}/%{name}
-install -m 644 docs/pdf/* %{buildroot}%{_docdir}/%{name}
+#install -m 644 docs/pdf/* %{buildroot}%{_docdir}/%{name}
 
 # install state directory
 install -d -m 755 %{buildroot}%{_localstatedir}/lib/xend/{domains,state,storage}
