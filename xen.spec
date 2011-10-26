@@ -31,14 +31,14 @@ Source23:   init.xend
 Source30:   sysconfig.xenstored
 Source31:   sysconfig.xenconsoled
 Source32:   sysconfig.blktapctrl
-#Patch0:     xen-4.0.1-fix-stubdom-Makefile.patch
+Patch0:     xen-4.0.1-fix-stubdom-Makefile.patch
 # fedora patches
-#Patch3:    xen-xenstore-cli.patch
-#Patch5:    xen-net-disable-iptables-on-bridge.patch
-#Patch10:   xen-no-werror.patch
-#Patch11:   xen-4.0.1-gcc45.patch
-#Patch12:   xen-4.0.1-gcc451.patch
-#Patch13:   xen-4.0.1-py2.7.patch
+Patch3:    xen-xenstore-cli.patch
+Patch5:    xen-net-disable-iptables-on-bridge.patch
+Patch10:   xen-no-werror.patch
+Patch11:   xen-4.0.1-gcc45.patch
+Patch12:   xen-4.0.1-gcc451.patch
+Patch13:   xen-4.0.1-py2.7.patch
 Requires:   python
 Requires:   python-twisted-core
 Requires:   python-pyxml
@@ -135,12 +135,12 @@ to compile applications linked with Xen libraries.
 
 %prep
 %setup -q
-%patch0 -p 1
+#patch0 -p 1
 #patch3 -p 1
 #patch5 -p 1
-%patch10 -p 1
+#patch10 -p 1
 #patch11 -p 1
-%patch12 -p1
+#patch12 -p1
 #patch13 -p1
 
 # stub domain
