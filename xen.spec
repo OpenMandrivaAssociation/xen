@@ -383,7 +383,8 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %{_docdir}/%{name}/*
 %exclude %{_docdir}/%{name}/README
-%doc docs/ps/* docs/pdf/*
+%doc docs/ps/* 
+#docs/pdf/*
 
 %files -n %{libname}
 %defattr(-,root,root)
