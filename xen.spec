@@ -1,13 +1,11 @@
-%define name        xen
-%define version     4.1.2
-%define release     %mkrel 1
 %define major       3.0
 %define libname     %mklibname %{name} %{major}
 %define develname   %mklibname %{name} -d
+%define pyver       %(rpm -q --qf '%%{VERSION}' python |cut -d. -f1-2)
 
-Name:       %{name}
-Version:    %{version}
-Release:    %{release}
+Name:       xen
+Version:    4.1.2
+Release:    2
 Summary:    The basic tools for managing XEN virtual machines
 Group:      System/Kernel and hardware
 License:    GPL
@@ -31,6 +29,8 @@ Source23:   init.xend
 Source30:   sysconfig.xenstored
 Source31:   sysconfig.xenconsoled
 Source32:   sysconfig.blktapctrl
+# Make sure we pass rpmlint checks
+Source100:  xen.rpmlintrc
 Patch0:     xen-4.0.1-fix-stubdom-Makefile.patch
 # fedora patches
 Patch3:    xen-xenstore-cli.patch
@@ -50,23 +50,22 @@ Requires:   grub
 Requires:   kernel-xen
 Requires:   %{libname} = %{version}-%{release}
 BuildRequires:  SDL-devel
-BuildRequires:  libx11-devel
+BuildRequires:  pkgconfig(x11)
 BuildRequires:  gtk2-devel
 BuildRequires:  curl-devel
 Buildrequires:  dev86-devel
-BuildRequires:  libext2fs-devel
+BuildRequires:  pkgconfig(ext2fs)
 BuildRequires:  ncurses-devel
-BuildRequires:  libpython-devel >= 2.4
+BuildRequires:  pkgconfig(python) >= 2.4
 BuildRequires:  zlib-devel
 BuildRequires:  bzip2-devel
 BuildRequires:  lzma-devel
-BuildRequires:  pciutils-devel
-BuildRequires:  libidn-devel
-BuildRequires:  openssl-devel
-BuildRequires:  gnutls-devel
+BuildRequires:  pkgconfig(libpci)
+BuildRequires:  pkgconfig(libidn)
+BuildRequires:  pkgconfig(libssl)
+BuildRequires:  pkgconfig(gnutls)
 BuildRequires:  brlapi-devel
-BuildRequires:  e2fsprogs-devel
-BuildRequires:  libuuid-devel
+BuildRequires:  pkgconfig(uuid)
 BuildRequires:  ocaml
 BuildRequires:  ocaml-findlib-devel
 BuildRequires:  iasl
@@ -75,7 +74,7 @@ BuildRequires:  vde-devel
 BuildRequires:  libaio-devel
 %endif
 BuildRequires:  gettext
-BuildRequires:  libconfig-devel
+BuildRequires:  pkgconfig(libconfig)
 # documentation
 BuildRequires:  ghostscript
 BuildRequires:  transfig
@@ -86,7 +85,6 @@ BuildRequires:  tetex-texi2html
 %endif
 Obsoletes:      xen-uptodate
 Requires:       xen-hypervisor = %{version}
-BuildRoot:      %{_tmppath}/%{name}-%{version}
 
 %description 
 The basic tools for managing XEN virtual machines.
@@ -290,7 +288,6 @@ rm -rf %{buildroot}
 %{_localstatedir}/run/xenstored
  # xend state
 %{_localstatedir}/run/xend
-%{_localstatedir}/run/xend/boot
 # init scripts
 %{_initrddir}/xend
 %{_initrddir}/xendomains
