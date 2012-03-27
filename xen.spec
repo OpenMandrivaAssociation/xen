@@ -195,8 +195,8 @@ install -d -m 755 %{buildroot}%{_mandir}/man{1,5}
 rm -rf %{buildroot}%{_docdir}/qemu
 install -d -m 755 %{buildroot}%{_docdir}/%{name}
 install -m 644 README %{buildroot}%{_docdir}/%{name}
-install -m 644 docs/ps/* %{buildroot}%{_docdir}/%{name}
-#install -m 644 docs/pdf/* %{buildroot}%{_docdir}/%{name}
+install -m 644 docs/ps/* %{buildroot}%{_docdir}/%{name} || :
+install -m 644 docs/pdf/* %{buildroot}%{_docdir}/%{name} || :
 
 # install state directory
 install -d -m 755 %{buildroot}%{_localstatedir}/lib/xend/{domains,state,storage}
@@ -380,8 +380,6 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %{_docdir}/%{name}/*
 %exclude %{_docdir}/%{name}/README
-%doc docs/ps/* 
-#docs/pdf/*
 
 %files -n %{libname}
 %defattr(-,root,root)
