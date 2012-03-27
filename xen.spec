@@ -79,7 +79,7 @@ BuildRequires:  pkgconfig(libconfig)
 BuildRequires:  ghostscript
 BuildRequires:  transfig
 BuildRequires:  texinfo
-BuildRequires:  tetex-latex
+BuildRequires:  texlive-latex texlive-dvips
 %if %{mdkversion} <= 201010
 BuildRequires:  tetex-texi2html
 %endif
