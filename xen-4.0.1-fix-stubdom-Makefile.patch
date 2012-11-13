@@ -1,0 +1,11 @@
+--- xen-4.0.1/stubdom/Makefile.orig	2010-08-25 12:22:07.000000000 +0200
++++ xen-4.0.1/stubdom/Makefile	2010-08-29 10:06:42.000000000 +0200
+@@ -61,7 +61,7 @@
+ $(call cc-options-add,TARGET_CFLAGS,CC,$(EMBEDDED_EXTRA_CFLAGS))
+ 
+ # Do not use host headers and libs
+-GCC_INSTALL = $(shell LANG=C gcc -print-search-dirs | sed -n -e 's/install: \(.*\)/\1/p')
++GCC_INSTALL = $(shell LC_ALL=C gcc -print-search-dirs | sed -n -e 's/install: \(.*\)/\1/p')
+ TARGET_CPPFLAGS += -U __linux__ -U __FreeBSD__ -U __sun__
+ TARGET_CPPFLAGS += -nostdinc
+ TARGET_CPPFLAGS += -isystem $(CURDIR)/$(MINI_OS)/include/posix
