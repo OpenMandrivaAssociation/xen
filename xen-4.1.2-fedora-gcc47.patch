@@ -1,0 +1,43 @@
+Fix compile problems with gcc-4.7 on Fedora 17 by adding asmlinkage
+definitions to make usage in .c and .h files consistent.
+* to IRQ_NAME in xen/arch/x86/i8259.c to match that in
+  xen/include/asm-x86/x86_32/asm_defns.h and
+  xen/include/asm-x86/x86_64/asm_defns.h
+* to svm_intr_assist in xen/include/asm-x86/hvm/svm/intr.h to match that in
+  xen/arch/x86/hvm/svm/intr.c
+* to xen/include/asm-x86/hvm/vmx/vmx.h to match that in
+  xen/arch/x86/hvm/vmx/vmx.c
+Signed-off-by: Michael Young <m.a.young@xxxxxxxxxxxx>
+
+--- a/xen/arch/x86/i8259.c	2012-01-15 19:42:43.036392655 +0000
++++ b/xen/arch/x86/i8259.c	2012-01-15 19:45:02.040654864 +0000
+@@ -64,7 +64,7 @@
+     IRQ(x,8), IRQ(x,9), IRQ(x,a), IRQ(x,b), \
+     IRQ(x,c), IRQ(x,d), IRQ(x,e), IRQ(x,f)
+ 
+-    static void (*interrupt[])(void) = {
++    static void (asmlinkage *interrupt[])(void) = {
+         IRQLIST_16(0x0), IRQLIST_16(0x1), IRQLIST_16(0x2), IRQLIST_16(0x3),
+         IRQLIST_16(0x4), IRQLIST_16(0x5), IRQLIST_16(0x6), IRQLIST_16(0x7),
+         IRQLIST_16(0x8), IRQLIST_16(0x9), IRQLIST_16(0xa), IRQLIST_16(0xb),
+--- a/xen/include/asm-x86/hvm/svm/intr.h	2012-01-15 19:46:27.823582433 +0000
++++ b/xen/include/asm-x86/hvm/svm/intr.h	2012-01-15 19:50:08.062829063 +0000
+@@ -21,6 +21,6 @@
+ #ifndef __ASM_X86_HVM_SVM_INTR_H__
+ #define __ASM_X86_HVM_SVM_INTR_H__
+ 
+-void svm_intr_assist(void);
++asmlinkage void svm_intr_assist(void);
+ 
+ #endif /* __ASM_X86_HVM_SVM_INTR_H__ */
+--- a/xen/include/asm-x86/hvm/vmx/vmx.h	2012-01-15 19:50:59.444186706 +0000
++++ b/xen/include/asm-x86/hvm/vmx/vmx.h	2012-01-15 19:51:58.573447489 +0000
+@@ -63,7 +63,7 @@
+ 
+ void vmx_asm_vmexit_handler(struct cpu_user_regs);
+ void vmx_asm_do_vmentry(void);
+-void vmx_intr_assist(void);
++asmlinkage void vmx_intr_assist(void);
+ void vmx_do_resume(struct vcpu *);
+ void vmx_vlapic_msr_changed(struct vcpu *v);
+ void vmx_realmode(struct cpu_user_regs *regs);

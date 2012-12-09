@@ -1,0 +1,6 @@
+# /usr/lib/xen/boot/hvmloader and /boot/xen-syms-4.1.2
+# aren't being stripped
+addFilter("E: unstripped-binary-or-object")
+# Intentional: The non-executable *.py files are modules invoked by other
+# (executable) *.py files
+addFilter("E: non-executable-script")
