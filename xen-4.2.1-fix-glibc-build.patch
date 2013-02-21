@@ -1,0 +1,11 @@
+diff -Naur a/tools/qemu-xen-traditional/Makefile.target b/tools/qemu-xen-traditional/Makefile.target
+--- a/tools/qemu-xen-traditional/Makefile.target	2012-04-24 19:35:40.000000000 +0200
++++ b/tools/qemu-xen-traditional/Makefile.target	2012-08-23 09:41:05.124447549 +0200
+@@ -250,6 +250,7 @@
+ endif
+ 
+ LIBS+=-lz
++LIBS+=-lrt
+ ifdef CONFIG_ALSA
+ LIBS += -lasound
+ endif
