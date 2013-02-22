@@ -6,3 +6,5 @@ sources:
   "ocaml-3.11.0.tar.gz": 4e9cd02f15a2334086c1538d1478ec6a99c911c8
   "pciutils-2.2.9.tar.bz2": 2871be0890f0406c7f86fa01646e23935fda789e
   "zlib-1.2.3.tar.gz": 60faeaaf250642db5c0ea36cd6dcc9f99c8f3902
+  xen-4.2.1.tar.gz: 12672c072b97c9b70d2f5e4b6b7f6487f7193d11
+  ipxe-git-9a93db3f0947484e30e753bbd61a10b17336e20e.tar.gz: fecadf952821e830ce1a1d19655288eef8488f88
