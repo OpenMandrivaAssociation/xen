@@ -252,28 +252,10 @@ cp %{SOURCE15} stubdom
 cp %{SOURCE16} tools/firmware/etherboot/ipxe.tar.gz
 
 %build
-mkdir ld
-ln -s `which ld.bfd` ld/ld
-export PATH=`pwd`/ld:$PATH
 # clean all stuff
-export CFLAGS="$CFLAGS %{optflags}"
+export CFLAGS="%{optflags}"
 %make prefix=/usr dist-xen
-./configure \
-	--disable-seabios\
-	--build=%{_target_platform} \
-	--prefix=%{_prefix} \
-	--exec-prefix=%{_exec_prefix} \
-	--bindir=%{_bindir} \
-	--sbindir=%{_sbindir} \
-	--sysconfdir=%{_sysconfdir} \
-	--datadir=%{_datadir} \
-	--includedir=%{_includedir} \
-	--libdir=%{_libdir} \
-	--libexecdir=%{_libexecdir} \
-	--localstatedir=%{_localstatedir} \
-	--sharedstatedir=%{_sharedstatedir} \
-	--mandir=%{_mandir} \
-	--infodir=%{_infodir}
+%configure	--disable-seabios\
 
 %make prefix=/usr dist-tools
 make  prefix=/usr dist-docs
