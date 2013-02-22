@@ -259,12 +259,25 @@ export PATH="$PWD/bfd:$PATH"
 
 export CFLAGS="%{optflags}"
 %make prefix=/usr dist-xen
-%configure	--disable-seabios
+./configure --disable-seabios --build=%{_target_platform} \
+        --prefix=%{_prefix} \
+        --exec-prefix=%{_exec_prefix} \
+        --bindir=%{_bindir} \
+        --sbindir=%{_sbindir} \
+        --sysconfdir=%{_sysconfdir} \
+        --datadir=%{_datadir} \
+        --includedir=%{_includedir} \
+        --libdir=%{_libdir} \
+        --libexecdir=%{_libexecdir} \
+        --localstatedir=%{_localstatedir} \
+        --sharedstatedir=%{_sharedstatedir} \
+        --mandir=%{_mandir} \
+        --infodir=%{_infodir}
 
 %make prefix=/usr dist-tools
 make  prefix=/usr dist-docs
 unset CFLAGS
-make dist-stubdom LDFLAGS=
+make dist-stubdom
 
 %install
 make DESTDIR=%{buildroot} prefix=/usr install-xen
