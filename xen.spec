@@ -16,6 +16,8 @@
 %define libxlutil	%mklibname xlutil %{maj10}
 %define devname		%mklibname %{name} -d
 
+%define	_disable_ld_no_undefined 1
+
 Summary:	The basic tools for managing XEN virtual machines
 Name:		xen
 Version:	4.2.1
@@ -251,16 +253,18 @@ cp %{SOURCE15} stubdom
 cp %{SOURCE16} tools/firmware/etherboot/ipxe.tar.gz
 
 %build
+mkdir -p bfd
+ln -sf $(which ld.bfd) bfd/ld
+export PATH="$PWD/bfd:$PATH"
+
 export CFLAGS="%{optflags}"
-export CC="%{__cc} -fuse-ld=bfd"
-export LD=ld.bfd
-%make prefix=/usr dist-xen CC="$CC" LD="$LD"
+%make prefix=/usr dist-xen
 %configure	--disable-seabios
 
-%make prefix=/usr dist-tools CC="$CC" LD="$LD"
-make  prefix=/usr dist-docs CC="$CC" LD="$LD"
+%make prefix=/usr dist-tools
+make  prefix=/usr dist-docs
 unset CFLAGS
-make dist-stubdom
+make dist-stubdom LDFLAGS=
 
 %install
 make DESTDIR=%{buildroot} prefix=/usr install-xen
