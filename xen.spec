@@ -252,13 +252,14 @@ cp %{SOURCE15} stubdom
 cp %{SOURCE16} tools/firmware/etherboot/ipxe.tar.gz
 
 %build
-# clean all stuff
 export CFLAGS="%{optflags}"
-%make prefix=/usr dist-xen
-%configure	--disable-seabios\
+export CC="%{__cc} -fuse-ld=bfd"
+export LD=ld.bfd
+%make prefix=/usr dist-xen CC="$CC" LD="$LD"
+%configure	--disable-seabios
 
-%make prefix=/usr dist-tools
-make  prefix=/usr dist-docs
+%make prefix=/usr dist-tools CC="$CC" LD="$LD"
+make  prefix=/usr dist-docs CC="$CC" LD="$LD"
 unset CFLAGS
 make dist-stubdom
 
