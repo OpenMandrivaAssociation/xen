@@ -26,8 +26,7 @@ License:	GPLv2+
 Url:		http://xen.org/
 Source0:	http://bits.xensource.com/oss-xen/release/%{version}/%{name}-%{version}.tar.gz
 Source1:	%{name}.modules
-Source2:	qemu-xen-4.0.0-rc4.tar.gz
-Source3:	http://www.hyperrealm.com/libconfig/libconfig-1.3.2.tar.gz
+Source3:	http://xenbits.xen.org/xen-extfiles/libconfig-1.3.2.tar.gz
 # stubdoms
 Source10:	http://xenbits.xen.org/xen-extfiles/zlib-1.2.3.tar.gz
 Source11:	http://xenbits.xen.org/xen-extfiles/newlib-1.16.0.tar.gz
@@ -252,10 +251,10 @@ cp %{SOURCE15} stubdom
 
 cp %{SOURCE16} tools/firmware/etherboot/ipxe.tar.gz
 
-# qemu
-tar xf %{SOURCE2} -C tools
-
 %build
+mkdir ld
+ln -s `which ld.bfd` ld/ld
+export PATH=`pwd`/ld:$PATH
 # clean all stuff
 export CFLAGS="$CFLAGS %{optflags}"
 %make prefix=/usr dist-xen
@@ -276,9 +275,6 @@ export CFLAGS="$CFLAGS %{optflags}"
 	--mandir=%{_mandir} \
 	--infodir=%{_infodir}
 
-mkdir ld
-ln -s `which ld.bfd` ld/ld
-export PATH=`pwd`/ld:$PATH
 %make prefix=/usr dist-tools
 make  prefix=/usr dist-docs
 unset CFLAGS
