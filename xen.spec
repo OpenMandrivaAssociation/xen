@@ -15,7 +15,6 @@
 %define libxenvchan	%mklibname xenvchan %{maj10}
 %define libxlutil	%mklibname xlutil %{maj10}
 %define devname		%mklibname %{name} -d
-%define pyver	%(rpm -q --qf '%%{VERSION}' python |cut -d. -f1-2)
 
 Summary:	The basic tools for managing XEN virtual machines
 Name:		xen
@@ -372,8 +371,8 @@ export DONT_GPRINTIFY=1
 %{py_platsitedir}/grub/*
 %{py_platsitedir}/fsimage.so
 %if %{mdkversion} > 200700
-%{py_platsitedir}/pygrub-0.3-py%{pyver}.egg-info
-%{py_platsitedir}/xen-3.0-py%{pyver}.egg-info
+%{py_platsitedir}/pygrub-0.3-py%{py_ver}.egg-info
+%{py_platsitedir}/xen-3.0-py%{py_ver}.egg-info
 %endif
 %{_datadir}/xen
 # general xen state
