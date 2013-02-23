@@ -85,7 +85,7 @@ BuildRequires:	pkgconfig(yajl)
 BuildRequires:	pkgconfig(zlib)
 
 Requires:	bridge-utils
-Requires:	glibc-xen
+#Requires:	glibc-xen
 Requires:	grub
 Requires:	iptables
 #Requires:	kernel-xen-pvops
