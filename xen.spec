@@ -280,6 +280,8 @@ unset CFLAGS
 make dist-stubdom
 
 %install
+export PATH="$PWD/bfd:$PATH"
+
 make DESTDIR=%{buildroot} prefix=/usr install-xen
 make DESTDIR=%{buildroot} prefix=/usr install-tools
 make DESTDIR=%{buildroot} prefix=/usr install-docs
