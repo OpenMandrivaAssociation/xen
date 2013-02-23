@@ -88,7 +88,7 @@ Requires:	bridge-utils
 Requires:	glibc-xen
 Requires:	grub
 Requires:	iptables
-Requires:	kernel-xen-pvops
+#Requires:	kernel-xen-pvops
 Requires:	kmod
 Requires:	python
 Requires:	python-twisted-core
