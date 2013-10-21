@@ -1,32 +1,33 @@
 %define	major	0
 %define	maj10	1.0
-%define	maj20	2.0
+%define	maj43	2.0
 %define	maj30	3.0
-%define	maj42	4.2
+%define	maj43	4.3
 %define	libblktap	%mklibname blktap %{maj30}
 %define libblktapctl	%mklibname blktapctl %{maj10}
 %define libbfsimage	%mklibname bfsimage %{maj10}
 %define libvhd		%mklibname vhd %{maj10}
-%define libxenctrl	%mklibname xenctrl %{maj42}
-%define libxenguest	%mklibname xenguest %{maj42}
-%define libxenlight	%mklibname xenlight %{maj20}
+%define libxenctrl	%mklibname xenctrl %{maj43}
+%define libxenguest	%mklibname xenguest %{maj43}
+%define libxenlight	%mklibname xenlight %{maj43}
 %define libxenstat	%mklibname xenstat %{major}
 %define	libxenstore	%mklibname xenstore %{maj30}
 %define libxenvchan	%mklibname xenvchan %{maj10}
-%define libxlutil	%mklibname xlutil %{maj10}
+%define libxlutil	%mklibname xlutil %{maj43}
 %define devname		%mklibname %{name} -d
 
 %define	_disable_ld_no_undefined 1
 
 Summary:	The basic tools for managing XEN virtual machines
 Name:		xen
-Version:	4.2.1
+Version:	4.3.0
 Release:	1
 Group:		System/Kernel and hardware
 License:	GPLv2+
 Url:		http://xen.org/
 Source0:	http://bits.xensource.com/oss-xen/release/%{version}/%{name}-%{version}.tar.gz
 Source1:	%{name}.modules
+Source2:	qemu-xen-4.0.0-rc4.tar.gz
 Source3:	http://xenbits.xen.org/xen-extfiles/libconfig-1.3.2.tar.gz
 # stubdoms
 Source10:	http://xenbits.xen.org/xen-extfiles/zlib-1.2.3.tar.gz
@@ -34,25 +35,39 @@ Source11:	http://xenbits.xen.org/xen-extfiles/newlib-1.16.0.tar.gz
 Source12:	http://xenbits.xen.org/xen-extfiles/grub-0.97.tar.gz
 Source13:	http://xenbits.xen.org/xen-extfiles/lwip-1.3.0.tar.gz
 Source14:	http://xenbits.xen.org/xen-extfiles/pciutils-2.2.9.tar.bz2
-Source15:	http://caml.inria.fr/pub/distrib/ocaml-3.11/ocaml-3.11.0.tar.gz
+Source15:	ocaml-3.11.0.tar.gz
 Source16:	http://xenbits.xen.org/xen-extfiles/ipxe-git-9a93db3f0947484e30e753bbd61a10b17336e20e.tar.gz
+Source17:	http://xenbits.xen.org/xen-extfiles/polarssl-1.1.4-gpl.tgz
+
 # initscripts
-Source20:	init.xenstored 
+Source20:	init.xenstored
 Source21:	init.xenconsoled
 Source22:	init.blktapctrl
 Source23:	init.xend
 Source30:	sysconfig.xenstored
 Source31:	sysconfig.xenconsoled
 Source32:	sysconfig.blktapctrl
-# Make sure we pass rpmlint checks
-Source100:	xen.rpmlintrc
+Source33:	%{name}-tmpfiles.conf
+# Mageia patches:
 Patch0:		xen-4.1.2-fix-stubdom-Makefile.patch
 Patch2:		xen-4.1.3-fix-doc-build.patch
 Patch3:		xen-4.2.1-fix-glibc-build.patch
+Patch4:		xencommons-fix-service.patch
+Patch5:		xen-4.2-ocaml-build.patch
 # fedora patches
-Patch12:	xen-4.0.1-gcc451.patch
 Patch13:	qemu-xen.tradonly.patch
 Patch14:	xen-4.2.1-fix-xg-build.patch
+Patch15:	xen.pygrubtitlefix.patch
+# security patches
+Patch1062:	xsa62.patch
+Patch1063:	xsa63.patch
+Patch1064:	xsa64.patch
+Patch1066:	xsa66.patch
+Patch1067:	xsa67.patch
+Patch1068: 	xsa68.patch
+Patch1069: 	xsa69.patch
+Patch1070: 	xsa70.patch
+
 # documentation
 BuildRequires:	ghostscript
 BuildRequires:	transfig
@@ -98,11 +113,11 @@ Requires:	xen-hypervisor = %{version}
 %description 
 The basic tools for managing XEN virtual machines.
 
-%package ocaml
+%package -n	ocaml-xen
 Summary:	OCaml bindings for Xen
 Group:		Development/Other
 
-%description ocaml
+%description -n ocaml-xen
 This package contains the Ocaml bindings for Xen
 
 %package hypervisor
@@ -249,6 +264,7 @@ cp %{SOURCE12} stubdom
 cp %{SOURCE13} stubdom
 cp %{SOURCE14} stubdom
 cp %{SOURCE15} stubdom
+cp %{SOURCE17} stubdom
 
 cp %{SOURCE16} tools/firmware/etherboot/ipxe.tar.gz
 
@@ -258,7 +274,12 @@ ln -sf $(which ld.bfd) bfd/ld
 export PATH="$PWD/bfd:$PATH"
 
 export CFLAGS="%{optflags}"
+%ifnarch %{ix86}
 %make prefix=/usr dist-xen
+%endif
+sed -E -i 's/(as_fn_error \$\? "cannot find wget or ftp" "\$LINENO" 5)/as_fn_status $?/' tools/configure
+sed -E -i 's/(as_fn_error \$\? "cannot find wget or ftp" "\$LINENO" 5)/as_fn_status $?/' stubdom/configure
+
 ./configure --disable-seabios --build=%{_target_platform} \
         --prefix=%{_prefix} \
         --exec-prefix=%{_exec_prefix} \
@@ -282,7 +303,19 @@ make dist-stubdom
 %install
 export PATH="$PWD/bfd:$PATH"
 
+%ifarch %{ix86}
+cat > README.install.urpmi <<_EOF
+Since xen 4.3, the hypervisor is no longer supported on x86_32. But fear not,
+you can actually use the x86_64 xen hypervisor, even when using a 32bit kernel
+and system. This is because the hypervisor is loaded before the kernel and OS.
+Keep in mind that a x86_64 capable processor is still required, but then if
+you are installing a hypervisor, you really should be using 64bit anyway.
+_EOF
+ln README.install.urpmi README.4.3.0.upgrade.urpmi
+%else
 make DESTDIR=%{buildroot} prefix=/usr install-xen
+%endif
+
 make DESTDIR=%{buildroot} prefix=/usr install-tools
 make DESTDIR=%{buildroot} prefix=/usr install-docs
 make DESTDIR=%{buildroot} prefix=/usr install-stubdom
@@ -305,23 +338,23 @@ rm -f %{buildroot}/%{_sysconfdir}/xen/README*
 
 # fix man pages
 install -d -m 755 %{buildroot}%{_mandir}/man{1,5}
-#install -m 644 docs/man1/* %{buildroot}%{_mandir}/man1
-#install -m 644 docs/man5/* %{buildroot}%{_mandir}/man5
+install -m 644 docs/man/*.1 %{buildroot}%{_mandir}/man1
+install -m 644 docs/man/*.5 %{buildroot}%{_mandir}/man5
 
 # install doc manually
 rm -rf %{buildroot}%{_docdir}/qemu
 install -d -m 755 %{buildroot}%{_docdir}/%{name}
 install -m 644 README %{buildroot}%{_docdir}/%{name}
-install -m 644 docs/ps/* %{buildroot}%{_docdir}/%{name} || :
-install -m 644 docs/pdf/* %{buildroot}%{_docdir}/%{name} || :
+install -d -m 755 %{buildroot}%{_docdir}/%{name}/txt
+install -d -m 755 %{buildroot}%{_docdir}/%{name}/html
+cp -R docs/txt/* %{buildroot}%{_docdir}/%{name}/txt/
+cp -R docs/html/* %{buildroot}%{_docdir}/%{name}/html/
+
+# install log directory
+install -d -m 755 %{buildroot}%{_localstatedir}/log/xen
 
 # install state directory
 install -d -m 755 %{buildroot}%{_localstatedir}/lib/xend/{domains,state,storage}
-
-# init scripts
-#install -d -m 755 %{buildroot}%{_initrddir}
-#mv %{buildroot}%{_sysconfdir}/init.d/* %{buildroot}%{_initrddir}
-#rm -rf %{buildroot}%{_sysconfdir}/init.d
 
 install -m 755 %{SOURCE20} %{buildroot}%{_initrddir}/xenstored
 install -m 755 %{SOURCE21} %{buildroot}%{_initrddir}/xenconsoled
@@ -337,6 +370,24 @@ install -m 644 %{SOURCE32} %{buildroot}%{_sysconfdir}/sysconfig/blktapctrl
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig/modules
 install -m 755 %{SOURCE1} \
     %{buildroot}%{_sysconfdir}/sysconfig/modules/%{name}.modules 
+
+# tmpfiles
+install -D -p -m 0644 %{SOURCE33} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+
+# udev
+#rm -rf %{buildroot}/etc/udev/rules.d/xen*.rules
+#mv %{buildroot}/etc/udev/rules.d/xen*.rules %{buildroot}/etc/udev/rules.d
+mkdir -p %{buildroot}%{_udevrulesdir}
+mv %{buildroot}%{_sysconfdir}/udev/rules.d/xen*.rules %{buildroot}%{_udevrulesdir}
+
+# quite some hardcoded paths inside scripts rely on this
+%if "%{_lib}" != "lib"
+mv %{buildroot}%{_libdir}/xen/bin/libxl-save-helper %{buildroot}%{_prefix}/lib/xen/bin/
+%endif
+
+# move ocaml stubs to correct dir
+mkdir -p %{buildroot}%{_libdir}/ocaml/stublibs/
+mv %{buildroot}%{_libdir}/ocaml/*/dll*_stubs.so %{buildroot}%{_libdir}/ocaml/stublibs/
 
 # logrotate
 mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d
@@ -356,6 +407,7 @@ rm -rf %{buildroot}/usr/info
 export DONT_GPRINTIFY=1
 
 %post
+%tmpfiles_create %{name}
 %_post_service xencommons
 %_post_service xend
 %_post_service xendomains
@@ -369,7 +421,7 @@ export DONT_GPRINTIFY=1
 %dir %{_docdir}/%{name}
 %{_docdir}/%{name}/README
 %{_sysconfdir}/bash_completion.d/xl.sh
-%config(noreplace) %{_sysconfdir}/udev/rules.d/*
+%config(noreplace) %{_udevrulesdir}/*
 %dir %{_sysconfdir}/xen
 %{_sysconfdir}/xen/scripts
 %{_sysconfdir}/xen/auto
@@ -417,6 +469,7 @@ export DONT_GPRINTIFY=1
 %config(noreplace) %{_sysconfdir}/sysconfig/xenconsoled
 %config(noreplace) %{_sysconfdir}/sysconfig/xencommons
 %config(noreplace) %{_sysconfdir}/logrotate.d/xen
+%{_tmpfilesdir}/%{name}.conf
 %{_bindir}/pygrub
 %{_bindir}/qemu-img-xen
 %{_bindir}/qemu-nbd-xen
@@ -446,6 +499,8 @@ export DONT_GPRINTIFY=1
 %{_sbindir}/xenperf
 %{_sbindir}/xenpm
 %{_sbindir}/xenpmd
+%{_bindir}/xencov_split
+%{_sbindir}/xencov
 %{_sbindir}/flask-getenforce
 %{_sbindir}/flask-get-bool
 %{_sbindir}/flask-label-pci
@@ -476,13 +531,8 @@ export DONT_GPRINTIFY=1
 %{_sbindir}/xen-hvmcrash
 %{_sbindir}/xl
 
-%files ocaml
-%{_libdir}/ocaml/xeneventchn
-%{_libdir}/ocaml/xenmmap
-%{_libdir}/ocaml/xenbus
-%{_libdir}/ocaml/xenctrl
-%{_libdir}/ocaml/xenlight
-%{_libdir}/ocaml/xenstore
+%files -n ocaml-xen
+%{_libdir}/ocaml/
 
 %files hypervisor
 /boot/xen-syms-*
@@ -506,13 +556,13 @@ export DONT_GPRINTIFY=1
 %{_libdir}/libvhd.so.%{maj10}*
 
 %files -n %{libxenctrl}
-%{_libdir}/libxenctrl.so.%{maj42}*
+%{_libdir}/libxenctrl.so.%{maj43}*
 
 %files -n %{libxenguest}
-%{_libdir}/libxenguest.so.%{maj42}*
+%{_libdir}/libxenguest.so.%{maj43}*
 
 %files -n %{libxenlight}
-%{_libdir}/libxenlight.so.%{maj20}*
+%{_libdir}/libxenlight.so.%{maj43}*
 
 %files -n %{libxenstat}
 %{_libdir}/libxenstat.so.%{major}*
@@ -524,7 +574,7 @@ export DONT_GPRINTIFY=1
 %{_libdir}/libxenvchan.so.%{maj10}*
 
 %files -n %{libxlutil}
-%{_libdir}/libxlutil.so.%{maj10}*
+%{_libdir}/libxlutil.so.%{maj43}*
 
 %files -n %{devname}
 %{_includedir}/xen
@@ -532,4 +582,3 @@ export DONT_GPRINTIFY=1
 %{_includedir}/*.h
 %{_libdir}/*.so
 %{_libdir}/*.a
-

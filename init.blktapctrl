@@ -14,7 +14,6 @@
 # Should-Stop:
 # Default-Start:     3 4 5
 # Default-Stop:      0 1 2 6
-# Default-Enabled:   yes
 # Short-Description: Start/stop blktapctrl
 # Description:       Starts and stops the Xen blktapctrl daemon
 ### END INIT INFO

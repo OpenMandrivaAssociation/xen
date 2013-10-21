@@ -1,0 +1,11 @@
+--- a/tools/hotplug/Linux/init.d/xencommons	2013-07-09 12:46:56.000000000 +0200
++++ b/tools/hotplug/Linux/init.d/xencommons	2013-10-01 13:27:21.779363937 +0200
+@@ -116,7 +116,7 @@
+ 	test -z "$XENCONSOLED_TRACE" || XENCONSOLED_ARGS=" --log=$XENCONSOLED_TRACE"
+ 	${SBINDIR}/xenconsoled --pid-file=$XENCONSOLED_PIDFILE $XENCONSOLED_ARGS
+ 	echo Starting QEMU as disk backend for dom0
+-	test -z "$QEMU_XEN" && QEMU_XEN="${LIBEXEC}/qemu-system-i386"
++	test -z "$QEMU_XEN" && QEMU_XEN="/usr/bin/qemu-system-i386"
+ 	$QEMU_XEN -xen-domid 0 -xen-attach -name dom0 -nographic -M xenpv -daemonize \
+ 		-monitor /dev/null -serial /dev/null -parallel /dev/null \
+ 		-pidfile $QEMU_PIDFILE
