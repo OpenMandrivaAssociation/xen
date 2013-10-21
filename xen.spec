@@ -535,9 +535,13 @@ export DONT_GPRINTIFY=1
 %{_libdir}/ocaml/
 
 %files hypervisor
+%ifarch %{ix86}
+%doc README.4.3.0.upgrade.urpmi README.install.urpmi
+%else
 /boot/xen-syms-*
 /boot/xen-*.gz
 /boot/xen.gz
+%endif
 
 %files doc
 %{_docdir}/%{name}/*
