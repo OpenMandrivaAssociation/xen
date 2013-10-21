@@ -48,6 +48,7 @@ Source30:	sysconfig.xenstored
 Source31:	sysconfig.xenconsoled
 Source32:	sysconfig.blktapctrl
 Source33:	%{name}-tmpfiles.conf
+Source34:	xen.rpmlintrc
 # Mageia patches:
 Patch0:		xen-4.1.2-fix-stubdom-Makefile.patch
 Patch2:		xen-4.1.3-fix-doc-build.patch
