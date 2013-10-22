@@ -68,6 +68,7 @@ Patch1067:	xsa67.patch
 Patch1068: 	xsa68.patch
 Patch1069: 	xsa69.patch
 Patch1070: 	xsa70.patch
+Patch1071:	0001-fix-ARM-build-on-hardfloat-arches.patch
 
 # documentation
 BuildRequires:	ghostscript

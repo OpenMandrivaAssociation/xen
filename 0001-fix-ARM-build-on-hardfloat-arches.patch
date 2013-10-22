@@ -1,0 +1,63 @@
+From 89e19ca64938806d22909624083e63ad30be3d23 Mon Sep 17 00:00:00 2001
+From: Alexander Khryukin <alexander@mezon.ru>
+Date: Tue, 22 Oct 2013 10:46:40 +0000
+Subject: [PATCH] fix ARM build on hardfloat arches
+
+---
+ xen/arch/arm/Rules.mk | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/xen/arch/arm/Rules.mk b/xen/arch/arm/Rules.mk
+index 422ed04..3b29c2a 100644
+--- a/xen/arch/arm/Rules.mk
++++ b/xen/arch/arm/Rules.mk
+@@ -10,8 +10,6 @@ HAS_DEVICE_TREE := y
+ HAS_VIDEO := y
+ HAS_ARM_HDLCD := y
+ 
+-CFLAGS += -fno-builtin -fno-common -Wredundant-decls
+-CFLAGS += -iwithprefix include -Werror -Wno-pointer-arith -pipe
+ CFLAGS += -I$(BASEDIR)/include
+ 
+ $(call cc-options-add,CFLAGS,CC,$(EMBEDDED_EXTRA_CFLAGS))
+@@ -21,8 +19,7 @@ arm := y
+ 
+ ifeq ($(TARGET_SUBARCH),arm32)
+ # Prevent floating-point variables from creeping into Xen.
+-CFLAGS += -msoft-float
+-CFLAGS += -mcpu=cortex-a15 -mfpu=vfpv3 -mfloat-abi=softfp
++CFLAGS += -mcpu=cortex-a15
+ arm32 := y
+ arm64 := n
+ endif
+@@ -64,6 +61,21 @@ EARLY_PRINTK_INC := pl011
+ EARLY_PRINTK_BAUD := 115200
+ EARLY_UART_BASE_ADDRESS := 0xfff36000
+ endif
++ifeq ($(CONFIG_EARLY_PRINTK), omap5432)
++EARLY_PRINTK_INC := 8250
++EARLY_UART_BASE_ADDRESS := 0x48020000
++EARLY_UART_REG_SHIFT := 2
++endif
++ifeq ($(CONFIG_EARLY_PRINTK), sun6i)
++EARLY_PRINTK_INC := 8250
++EARLY_UART_BASE_ADDRESS := 0x01c28000
++EARLY_UART_REG_SHIFT := 2
++endif
++ifeq ($(CONFIG_EARLY_PRINTK), sun7i)
++EARLY_PRINTK_INC := 8250
++EARLY_UART_BASE_ADDRESS := 0x01c28000
++EARLY_UART_REG_SHIFT := 2
++endif
+ 
+ ifneq ($(EARLY_PRINTK_INC),)
+ EARLY_PRINTK := y
+@@ -74,4 +86,5 @@ CFLAGS-$(EARLY_PRINTK_INIT_UART) += -DEARLY_PRINTK_INIT_UART
+ CFLAGS-$(EARLY_PRINTK) += -DEARLY_PRINTK_INC=\"debug-$(EARLY_PRINTK_INC).inc\"
+ CFLAGS-$(EARLY_PRINTK) += -DEARLY_PRINTK_BAUD=$(EARLY_PRINTK_BAUD)
+ CFLAGS-$(EARLY_PRINTK) += -DEARLY_UART_BASE_ADDRESS=$(EARLY_UART_BASE_ADDRESS)
++CFLAGS-$(EARLY_PRINTK) += -DEARLY_UART_REG_SHIFT=$(EARLY_UART_REG_SHIFT)
+ endif
+-- 
+1.8.3.2
+
