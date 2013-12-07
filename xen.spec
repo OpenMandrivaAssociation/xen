@@ -21,7 +21,7 @@
 Summary:	The basic tools for managing XEN virtual machines
 Name:		xen
 Version:	4.3.0
-Release:	4
+Release:	5
 Group:		System/Kernel and hardware
 License:	GPLv2+
 Url:		http://xen.org/
