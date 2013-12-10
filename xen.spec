@@ -4,26 +4,26 @@
 %define	maj30	3.0
 %define	maj43	4.3
 %define	libblktap	%mklibname blktap %{maj30}
-%define libblktapctl	%mklibname blktapctl %{maj10}
-%define libbfsimage	%mklibname bfsimage %{maj10}
-%define libvhd		%mklibname vhd %{maj10}
-%define libxenctrl	%mklibname xenctrl %{maj43}
-%define libxenguest	%mklibname xenguest %{maj43}
-%define libxenlight	%mklibname xenlight %{maj43}
-%define libxenstat	%mklibname xenstat %{major}
+%define	libblktapctl	%mklibname blktapctl %{maj10}
+%define	libbfsimage	%mklibname bfsimage %{maj10}
+%define	libvhd		%mklibname vhd %{maj10}
+%define	libxenctrl	%mklibname xenctrl %{maj43}
+%define	libxenguest	%mklibname xenguest %{maj43}
+%define	libxenlight	%mklibname xenlight %{maj43}
+%define	libxenstat	%mklibname xenstat %{major}
 %define	libxenstore	%mklibname xenstore %{maj30}
-%define libxenvchan	%mklibname xenvchan %{maj10}
-%define libxlutil	%mklibname xlutil %{maj43}
-%define devname		%mklibname %{name} -d
+%define	libxenvchan	%mklibname xenvchan %{maj10}
+%define	libxlutil	%mklibname xlutil %{maj43}
+%define	devname		%mklibname %{name} -d
 
 %define	_disable_ld_no_undefined 1
 
 Summary:	The basic tools for managing XEN virtual machines
 Name:		xen
-Version:	4.3.0
-Release:	5
-Group:		System/Kernel and hardware
+Version:	4.3.1
+Release:	1
 License:	GPLv2+
+Group:		System/Kernel and hardware
 Url:		http://xen.org/
 Source0:	http://bits.xensource.com/oss-xen/release/%{version}/%{name}-%{version}.tar.gz
 Source1:	%{name}.modules
@@ -38,6 +38,8 @@ Source14:	http://xenbits.xen.org/xen-extfiles/pciutils-2.2.9.tar.bz2
 Source15:	ocaml-3.11.0.tar.gz
 Source16:	http://xenbits.xen.org/xen-extfiles/ipxe-git-9a93db3f0947484e30e753bbd61a10b17336e20e.tar.gz
 Source17:	http://xenbits.xen.org/xen-extfiles/polarssl-1.1.4-gpl.tgz
+Source18:	http://xenbits.xen.org/xen-extfiles/tpm_emulator-0.7.4.tar.gz
+Source19:	http://xenbits.xen.org/xen-extfiles/gmp-4.3.2.tar.bz2
 
 # initscripts
 Source20:	init.xenstored
@@ -60,14 +62,6 @@ Patch13:	qemu-xen.tradonly.patch
 Patch14:	xen-4.2.1-fix-xg-build.patch
 Patch15:	xen.pygrubtitlefix.patch
 # security patches
-Patch1062:	xsa62.patch
-Patch1063:	xsa63.patch
-Patch1064:	xsa64.patch
-Patch1066:	xsa66.patch
-Patch1067:	xsa67.patch
-Patch1068: 	xsa68.patch
-Patch1069: 	xsa69.patch
-Patch1070: 	xsa70.patch
 Patch1071:	0001-fix-ARM-build-on-hardfloat-arches.patch
 
 # documentation
@@ -110,24 +104,167 @@ Requires:	kmod
 Requires:	python
 Requires:	python-twisted-core
 Requires:	python-pyxml
-Requires:	xen-hypervisor = %{version}
+Requires:	xen-hypervisor = %{EVRD}
 
-%description 
+%description
 The basic tools for managing XEN virtual machines.
+
+%files
+%dir %{_docdir}/%{name}
+%{_docdir}/%{name}/README
+%{_sysconfdir}/bash_completion.d/xl.sh
+%config(noreplace) %{_udevrulesdir}/*
+%dir %{_sysconfdir}/xen
+%{_sysconfdir}/xen/scripts
+%{_sysconfdir}/xen/auto
+%config(noreplace) %{_sysconfdir}/xen/*.sxp
+%config(noreplace) %{_sysconfdir}/xen/*.xml
+%config(noreplace) %{_sysconfdir}/xen/xlexample*
+%config(noreplace) %{_sysconfdir}/xen/xmexample*
+%config(noreplace) %{_sysconfdir}/xen/cpupool
+%config(noreplace) %{_sysconfdir}/xen/xl.conf
+%config(noreplace) %{_sysconfdir}/xen/oxenstored.conf
+%{_mandir}/man*/*
+%{_libdir}/xen
+%if "%{_lib}" != "lib"
+%{_prefix}/lib/xen
+%endif
+%{_libdir}/fs
+%{py_platsitedir}/xen
+%{py_platsitedir}/grub/*
+%{py_platsitedir}/fsimage.so
+%if %{mdkversion} > 200700
+%{py_platsitedir}/pygrub-0.3-py%{py_ver}.egg-info
+%{py_platsitedir}/xen-3.0-py%{py_ver}.egg-info
+%endif
+%{_datadir}/xen
+# general xen state
+%{_localstatedir}/lib/xen
+%{_localstatedir}/lib/xend
+# xenstore state
+%{_localstatedir}/lib/xenstored
+%{_localstatedir}/run/xenstored
+ # xend state
+%{_localstatedir}/run/xend
+# init scripts
+%{_initrddir}/xend
+%{_initrddir}/xendomains
+%{_initrddir}/blktapctrl
+%{_initrddir}/xenstored
+%{_initrddir}/xenconsoled
+%{_initrddir}/xen-watchdog
+%{_initrddir}/xencommons
+%{_sysconfdir}/sysconfig/modules/xen.modules
+%config(noreplace) %{_sysconfdir}/sysconfig/xendomains
+%config(noreplace) %{_sysconfdir}/sysconfig/blktapctrl
+%config(noreplace) %{_sysconfdir}/sysconfig/xenstored
+%config(noreplace) %{_sysconfdir}/sysconfig/xenconsoled
+%config(noreplace) %{_sysconfdir}/sysconfig/xencommons
+%config(noreplace) %{_sysconfdir}/logrotate.d/xen
+%{_tmpfilesdir}/%{name}.conf
+%{_bindir}/pygrub
+%{_bindir}/qemu-img-xen
+%{_bindir}/qemu-nbd-xen
+%{_bindir}/remus
+%{_bindir}/xencons
+%{_bindir}/xentrace
+%{_bindir}/xentrace_format
+%{_bindir}/xentrace_setsize
+%{_bindir}/xenstore-*
+%{_bindir}/xen-detect
+%{_bindir}/xenstore
+%{_sbindir}/xenstored
+%{_sbindir}/xm
+%{_sbindir}/xend
+%{_sbindir}/xenconsoled
+%{_sbindir}/xentop
+%{_sbindir}/xen-bugtool
+%{_sbindir}/xenbaked
+%{_sbindir}/xenmon.py
+%{_sbindir}/blktapctrl
+%{_sbindir}/img2qcow
+%{_sbindir}/qcow-create
+%{_sbindir}/qcow2raw
+%{_sbindir}/tapdisk
+%{_sbindir}/xentrace_setmask
+%{_sbindir}/xsview
+%{_sbindir}/xenperf
+%{_sbindir}/xenpm
+%{_sbindir}/xenpmd
+%{_bindir}/xencov_split
+%{_sbindir}/xencov
+%{_sbindir}/flask-getenforce
+%{_sbindir}/flask-get-bool
+%{_sbindir}/flask-label-pci
+%{_sbindir}/flask-loadpolicy
+%{_sbindir}/flask-setenforce
+%{_sbindir}/flask-set-bool
+%{_sbindir}/gdbsx
+%{_sbindir}/gtracestat
+%{_sbindir}/gtraceview
+%{_sbindir}/kdd
+%{_sbindir}/lock-util
+%{_sbindir}/oxenstored
+%{_sbindir}/tap-ctl
+%{_sbindir}/tapdisk-client
+%{_sbindir}/tapdisk-diff
+%{_sbindir}/tapdisk-stream
+%{_sbindir}/tapdisk2
+%{_sbindir}/td-util
+%{_sbindir}/vhd-update
+%{_sbindir}/vhd-util
+%{_sbindir}/xenlockprof
+%{_sbindir}/xenwatchdogd
+%{_sbindir}/xen-hvmctx
+%{_sbindir}/xen-tmem-list-parse
+%{_sbindir}/xen-lowmemd
+%{_sbindir}/xen-ringwatch
+%{_sbindir}/xen-hptool
+%{_sbindir}/xen-hvmcrash
+%{_sbindir}/xl
+
+%post
+%tmpfiles_create %{name}
+%_post_service xencommons
+%_post_service xend
+%_post_service xendomains
+
+%preun
+%_preun_service xencommons
+%_preun_service xend
+%_preun_service xendomains
+
+#----------------------------------------------------------------------------
 
 %package -n	ocaml-xen
 Summary:	OCaml bindings for Xen
 Group:		Development/Other
 
 %description -n ocaml-xen
-This package contains the Ocaml bindings for Xen
+This package contains the Ocaml bindings for Xen.
+
+%files -n ocaml-xen
+%{_libdir}/ocaml/
+
+#----------------------------------------------------------------------------
 
 %package hypervisor
 Summary:	Libraries for Xen tools
 Group:		System/Kernel and hardware
 
 %description hypervisor
-This package contains the Xen hypervisor
+This package contains the Xen hypervisor.
+
+%files hypervisor
+%ifarch %{ix86}
+%doc README.4.3.0.upgrade.urpmi README.install.urpmi
+%else
+/boot/xen-syms-*
+/boot/xen-*.gz
+/boot/xen.gz
+%endif
+
+#----------------------------------------------------------------------------
 
 %package doc
 Summary:	XEN documentation
@@ -136,14 +273,25 @@ Group:		System/Kernel and hardware
 %description doc
 XEN documentation.
 
+%files doc
+%{_docdir}/%{name}/*
+%exclude %{_docdir}/%{name}/README
+
+#----------------------------------------------------------------------------
+
 %package -n %{libblktapctl}
 Summary:	Libraries for %{name}
 Group:		System/Libraries
-Obsoletes:	%{_lib}xen3.0 < 4.2.1-1
+Conflicts:	%{_lib}xen3.0 < 4.2.1-1
 
 %description -n %{libblktapctl}
 This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
+
+%files -n %{libblktapctl}
+%{_libdir}/libblktapctl.so.%{maj10}*
+
+#----------------------------------------------------------------------------
 
 %package -n %{libblktap}
 Summary:	Libraries for %{name}
@@ -154,6 +302,11 @@ Conflicts:	%{_lib}xen3.0 < 4.2.1-1
 This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
 
+%files -n %{libblktap}
+%{_libdir}/libblktap.so.%{maj30}*
+
+#----------------------------------------------------------------------------
+
 %package -n %{libbfsimage}
 Summary:	Libraries for %{name}
 Group:		System/Libraries
@@ -162,6 +315,11 @@ Conflicts:	%{_lib}xen3.0 < 4.2.1-1
 %description -n %{libbfsimage}
 This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
+
+%files -n %{libbfsimage}
+%{_libdir}/libfsimage.so.%{maj10}*
+
+#----------------------------------------------------------------------------
 
 %package -n %{libvhd}
 Summary:	Libraries for %{name}
@@ -172,6 +330,11 @@ Conflicts:	%{_lib}xen3.0 < 4.2.1-1
 This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
 
+%files -n %{libvhd}
+%{_libdir}/libvhd.so.%{maj10}*
+
+#----------------------------------------------------------------------------
+
 %package -n %{libxenctrl}
 Summary:	Libraries for %{name}
 Group:		System/Libraries
@@ -180,6 +343,11 @@ Conflicts:	%{_lib}xen3.0 < 4.2.1-1
 %description -n %{libxenctrl}
 This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
+
+%files -n %{libxenctrl}
+%{_libdir}/libxenctrl.so.%{maj43}*
+
+#----------------------------------------------------------------------------
 
 %package -n %{libxenguest}
 Summary:	Libraries for %{name}
@@ -190,6 +358,11 @@ Conflicts:	%{_lib}xen3.0 < 4.2.1-1
 This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
 
+%files -n %{libxenguest}
+%{_libdir}/libxenguest.so.%{maj43}*
+
+#----------------------------------------------------------------------------
+
 %package -n %{libxenlight}
 Summary:	Libraries for %{name}
 Group:		System/Libraries
@@ -198,6 +371,11 @@ Conflicts:	%{_lib}xen3.0 < 4.2.1-1
 %description -n %{libxenlight}
 This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
+
+%files -n %{libxenlight}
+%{_libdir}/libxenlight.so.%{maj43}*
+
+#----------------------------------------------------------------------------
 
 %package -n %{libxenstat}
 Summary:	Libraries for %{name}
@@ -208,14 +386,25 @@ Conflicts:	%{_lib}xen3.0 < 4.2.1-1
 This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
 
+%files -n %{libxenstat}
+%{_libdir}/libxenstat.so.%{major}*
+
+#----------------------------------------------------------------------------
+
 %package -n %{libxenstore}
 Summary:	Libraries for %{name}
 Group:		System/Libraries
+Obsoletes:	%{_lib}xen3.0 < 4.2.1-1
 Conflicts:	%{_lib}xen3.0 < 4.2.1-1
 
 %description -n %{libxenstore}
 This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
+
+%files -n %{libxenstore}
+%{_libdir}/libxenstore.so.%{maj30}*
+
+#----------------------------------------------------------------------------
 
 %package -n %{libxenvchan}
 Summary:	Libraries for %{name}
@@ -226,6 +415,11 @@ Conflicts:	%{_lib}xen3.0 < 4.2.1-1
 This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
 
+%files -n %{libxenvchan}
+%{_libdir}/libxenvchan.so.%{maj10}*
+
+#----------------------------------------------------------------------------
+
 %package -n %{libxlutil}
 Summary:	Libraries for %{name}
 Group:		System/Libraries
@@ -235,25 +429,39 @@ Conflicts:	%{_lib}xen3.0 < 4.2.1-1
 This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
 
+%files -n %{libxlutil}
+%{_libdir}/libxlutil.so.%{maj43}*
+
+#----------------------------------------------------------------------------
+
 %package -n %{devname}
 Summary:	Development libraries and header files for %{name}
 Group:		Development/C
-Requires:	%{libblktap} = %{version}-%{release}
-Requires:	%{libblktapctl} = %{version}-%{release}
-Requires:	%{libbfsimage} = %{version}-%{release}
-Requires:	%{libvhd} = %{version}-%{release}
-Requires:	%{libxenctrl} = %{version}-%{release}
-Requires:	%{libxenguest} = %{version}-%{release}
-Requires:	%{libxenlight} = %{version}-%{release}
-Requires:	%{libxenstat} = %{version}-%{release}
-Requires:	%{libxenstore} = %{version}-%{release}
-Requires:	%{libxenvchan} = %{version}-%{release}
-Requires:	%{libxlutil} = %{version}-%{release}
-Provides:	%{name}-devel = %{version}-%{release}
+Requires:	%{libblktap} = %{EVRD}
+Requires:	%{libblktapctl} = %{EVRD}
+Requires:	%{libbfsimage} = %{EVRD}
+Requires:	%{libvhd} = %{EVRD}
+Requires:	%{libxenctrl} = %{EVRD}
+Requires:	%{libxenguest} = %{EVRD}
+Requires:	%{libxenlight} = %{EVRD}
+Requires:	%{libxenstat} = %{EVRD}
+Requires:	%{libxenstore} = %{EVRD}
+Requires:	%{libxenvchan} = %{EVRD}
+Requires:	%{libxlutil} = %{EVRD}
+Provides:	%{name}-devel = %{EVRD}
 
 %description -n %{devname}
 This package contains the development libraries and headers needed
 to compile applications linked with Xen libraries.
+
+%files -n %{devname}
+%{_includedir}/xen
+%{_includedir}/xenstore-compat
+%{_includedir}/*.h
+%{_libdir}/*.so
+%{_libdir}/*.a
+
+#----------------------------------------------------------------------------
 
 %prep
 %setup -q
@@ -267,6 +475,8 @@ cp %{SOURCE13} stubdom
 cp %{SOURCE14} stubdom
 cp %{SOURCE15} stubdom
 cp %{SOURCE17} stubdom
+cp %{SOURCE18} stubdom
+cp %{SOURCE19} stubdom
 
 cp %{SOURCE16} tools/firmware/etherboot/ipxe.tar.gz
 
@@ -408,183 +618,3 @@ rm -rf %{buildroot}/usr/info
 # gprintify has a bug handling some constructs in xendomain
 export DONT_GPRINTIFY=1
 
-%post
-%tmpfiles_create %{name}
-%_post_service xencommons
-%_post_service xend
-%_post_service xendomains
-
-%preun
-%_preun_service xencommons
-%_preun_service xend
-%_preun_service xendomains
-
-%files
-%dir %{_docdir}/%{name}
-%{_docdir}/%{name}/README
-%{_sysconfdir}/bash_completion.d/xl.sh
-%config(noreplace) %{_udevrulesdir}/*
-%dir %{_sysconfdir}/xen
-%{_sysconfdir}/xen/scripts
-%{_sysconfdir}/xen/auto
-%config(noreplace) %{_sysconfdir}/xen/*.sxp
-%config(noreplace) %{_sysconfdir}/xen/*.xml
-%config(noreplace) %{_sysconfdir}/xen/xlexample*
-%config(noreplace) %{_sysconfdir}/xen/xmexample*
-%config(noreplace) %{_sysconfdir}/xen/cpupool
-%config(noreplace) %{_sysconfdir}/xen/xl.conf
-%config(noreplace) %{_sysconfdir}/xen/oxenstored.conf
-%{_mandir}/man*/*
-%{_libdir}/xen
-%if "%{_lib}" != "lib"
-%{_prefix}/lib/xen
-%endif
-%{_libdir}/fs
-%{py_platsitedir}/xen
-%{py_platsitedir}/grub/*
-%{py_platsitedir}/fsimage.so
-%if %{mdkversion} > 200700
-%{py_platsitedir}/pygrub-0.3-py%{py_ver}.egg-info
-%{py_platsitedir}/xen-3.0-py%{py_ver}.egg-info
-%endif
-%{_datadir}/xen
-# general xen state
-%{_localstatedir}/lib/xen
-%{_localstatedir}/lib/xend
-# xenstore state
-%{_localstatedir}/lib/xenstored
-%{_localstatedir}/run/xenstored
- # xend state
-%{_localstatedir}/run/xend
-# init scripts
-%{_initrddir}/xend
-%{_initrddir}/xendomains
-%{_initrddir}/blktapctrl
-%{_initrddir}/xenstored
-%{_initrddir}/xenconsoled
-%{_initrddir}/xen-watchdog
-%{_initrddir}/xencommons
-%{_sysconfdir}/sysconfig/modules/xen.modules
-%config(noreplace) %{_sysconfdir}/sysconfig/xendomains
-%config(noreplace) %{_sysconfdir}/sysconfig/blktapctrl
-%config(noreplace) %{_sysconfdir}/sysconfig/xenstored
-%config(noreplace) %{_sysconfdir}/sysconfig/xenconsoled
-%config(noreplace) %{_sysconfdir}/sysconfig/xencommons
-%config(noreplace) %{_sysconfdir}/logrotate.d/xen
-%{_tmpfilesdir}/%{name}.conf
-%{_bindir}/pygrub
-%{_bindir}/qemu-img-xen
-%{_bindir}/qemu-nbd-xen
-%{_bindir}/remus
-%{_bindir}/xencons
-%{_bindir}/xentrace
-%{_bindir}/xentrace_format
-%{_bindir}/xentrace_setsize
-%{_bindir}/xenstore-*
-%{_bindir}/xen-detect
-%{_bindir}/xenstore
-%{_sbindir}/xenstored
-%{_sbindir}/xm
-%{_sbindir}/xend
-%{_sbindir}/xenconsoled
-%{_sbindir}/xentop
-%{_sbindir}/xen-bugtool
-%{_sbindir}/xenbaked
-%{_sbindir}/xenmon.py
-%{_sbindir}/blktapctrl
-%{_sbindir}/img2qcow
-%{_sbindir}/qcow-create
-%{_sbindir}/qcow2raw
-%{_sbindir}/tapdisk
-%{_sbindir}/xentrace_setmask
-%{_sbindir}/xsview
-%{_sbindir}/xenperf
-%{_sbindir}/xenpm
-%{_sbindir}/xenpmd
-%{_bindir}/xencov_split
-%{_sbindir}/xencov
-%{_sbindir}/flask-getenforce
-%{_sbindir}/flask-get-bool
-%{_sbindir}/flask-label-pci
-%{_sbindir}/flask-loadpolicy
-%{_sbindir}/flask-setenforce
-%{_sbindir}/flask-set-bool
-%{_sbindir}/gdbsx
-%{_sbindir}/gtracestat
-%{_sbindir}/gtraceview
-%{_sbindir}/kdd
-%{_sbindir}/lock-util
-%{_sbindir}/oxenstored
-%{_sbindir}/tap-ctl
-%{_sbindir}/tapdisk-client
-%{_sbindir}/tapdisk-diff
-%{_sbindir}/tapdisk-stream
-%{_sbindir}/tapdisk2
-%{_sbindir}/td-util
-%{_sbindir}/vhd-update
-%{_sbindir}/vhd-util
-%{_sbindir}/xenlockprof
-%{_sbindir}/xenwatchdogd
-%{_sbindir}/xen-hvmctx
-%{_sbindir}/xen-tmem-list-parse
-%{_sbindir}/xen-lowmemd
-%{_sbindir}/xen-ringwatch
-%{_sbindir}/xen-hptool
-%{_sbindir}/xen-hvmcrash
-%{_sbindir}/xl
-
-%files -n ocaml-xen
-%{_libdir}/ocaml/
-
-%files hypervisor
-%ifarch %{ix86}
-%doc README.4.3.0.upgrade.urpmi README.install.urpmi
-%else
-/boot/xen-syms-*
-/boot/xen-*.gz
-/boot/xen.gz
-%endif
-
-%files doc
-%{_docdir}/%{name}/*
-%exclude %{_docdir}/%{name}/README
-
-%files -n %{libblktap}
-%{_libdir}/libblktap.so.%{maj30}*
-
-%files -n %{libblktapctl}
-%{_libdir}/libblktapctl.so.%{maj10}*
-
-%files -n %{libbfsimage}
-%{_libdir}/libfsimage.so.%{maj10}*
-
-%files -n %{libvhd}
-%{_libdir}/libvhd.so.%{maj10}*
-
-%files -n %{libxenctrl}
-%{_libdir}/libxenctrl.so.%{maj43}*
-
-%files -n %{libxenguest}
-%{_libdir}/libxenguest.so.%{maj43}*
-
-%files -n %{libxenlight}
-%{_libdir}/libxenlight.so.%{maj43}*
-
-%files -n %{libxenstat}
-%{_libdir}/libxenstat.so.%{major}*
-
-%files -n %{libxenstore}
-%{_libdir}/libxenstore.so.%{maj30}*
-
-%files -n %{libxenvchan}
-%{_libdir}/libxenvchan.so.%{maj10}*
-
-%files -n %{libxlutil}
-%{_libdir}/libxlutil.so.%{maj43}*
-
-%files -n %{devname}
-%{_includedir}/xen
-%{_includedir}/xenstore-compat
-%{_includedir}/*.h
-%{_libdir}/*.so
-%{_libdir}/*.a
