@@ -157,6 +157,7 @@ The basic tools for managing XEN virtual machines.
 %{_unitdir}/proc-xen.mount
 %{_unitdir}/var-lib-xenstored.mount
 %{_unitdir}/xenstored.service
+%{_unitdir}/oxenstored.service
 %{_unitdir}/blktapctrl.service
 %{_unitdir}/xenconsoled.service
 %{_unitdir}/xen-watchdog.service
@@ -570,6 +571,12 @@ install -d -m 755 %{buildroot}%{_localstatedir}/log/xen
 
 # install state directory
 install -d -m 755 %{buildroot}%{_localstatedir}/lib/xend/{domains,state,storage}
+
+# remove old init scripts
+rm %{buildroot}%{_sysconfdir}/rc.d/init.d/xen-watchdog
+rm %{buildroot}%{_sysconfdir}/rc.d/init.d/xencommons
+rm %{buildroot}%{_sysconfdir}/rc.d/init.d/xend
+rm %{buildroot}%{_sysconfdir}/rc.d/init.d/xendomains
 
 # sysconfig
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
