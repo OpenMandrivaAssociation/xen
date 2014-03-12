@@ -1,15 +1,15 @@
 %define	major	0
 %define	maj10	1.0
-%define	maj43	2.0
 %define	maj30	3.0
-%define	maj43	4.3
+%define maj43	4.3
+%define	maj44	4.4
 %define	libblktap	%mklibname blktap %{maj30}
 %define	libblktapctl	%mklibname blktapctl %{maj10}
 %define	libbfsimage	%mklibname bfsimage %{maj10}
 %define	libvhd		%mklibname vhd %{maj10}
-%define	libxenctrl	%mklibname xenctrl %{maj43}
-%define	libxenguest	%mklibname xenguest %{maj43}
-%define	libxenlight	%mklibname xenlight %{maj43}
+%define	libxenctrl	%mklibname xenctrl %{maj44}
+%define	libxenguest	%mklibname xenguest %{maj44}
+%define	libxenlight	%mklibname xenlight %{maj44}
 %define	libxenstat	%mklibname xenstat %{major}
 %define	libxenstore	%mklibname xenstore %{maj30}
 %define	libxenvchan	%mklibname xenvchan %{maj10}
@@ -20,14 +20,13 @@
 
 Summary:	The basic tools for managing XEN virtual machines
 Name:		xen
-Version:	4.3.1
+Version:	4.4.0
 Release:	1
 License:	GPLv2+
 Group:		System/Kernel and hardware
 Url:		http://xen.org/
 Source0:	http://bits.xensource.com/oss-xen/release/%{version}/%{name}-%{version}.tar.gz
 Source1:	%{name}.modules
-Source2:	qemu-xen-4.0.0-rc4.tar.gz
 Source3:	http://xenbits.xen.org/xen-extfiles/libconfig-1.3.2.tar.gz
 # stubdoms
 Source10:	http://xenbits.xen.org/xen-extfiles/zlib-1.2.3.tar.gz
@@ -42,15 +41,23 @@ Source18:	http://xenbits.xen.org/xen-extfiles/tpm_emulator-0.7.4.tar.gz
 Source19:	http://xenbits.xen.org/xen-extfiles/gmp-4.3.2.tar.bz2
 
 # initscripts
-Source20:	init.xenstored
-Source21:	init.xenconsoled
-Source22:	init.blktapctrl
-Source23:	init.xend
 Source30:	sysconfig.xenstored
 Source31:	sysconfig.xenconsoled
 Source32:	sysconfig.blktapctrl
 Source33:	%{name}-tmpfiles.conf
 Source34:	xen.rpmlintrc
+# systemd bits
+Source40:	proc-xen.mount
+Source41:	var-lib-xenstored.mount
+Source42:	xenstored.service
+Source43:	blktapctrl.service
+Source44:	xend.service
+Source45:	xenconsoled.service
+Source46:	xen-watchdog.service
+Source47:	xendomains.service
+Source48:	libexec.xendomains
+Source50:	oxenstored.service
+
 # Mageia patches:
 Patch0:		xen-4.1.2-fix-stubdom-Makefile.patch
 Patch2:		xen-4.1.3-fix-doc-build.patch
@@ -58,11 +65,8 @@ Patch3:		xen-4.2.1-fix-glibc-build.patch
 Patch4:		xencommons-fix-service.patch
 Patch5:		xen-4.2-ocaml-build.patch
 # fedora patches
-Patch13:	qemu-xen.tradonly.patch
 Patch14:	xen-4.2.1-fix-xg-build.patch
 Patch15:	xen.pygrubtitlefix.patch
-# security patches
-Patch1071:	0001-fix-ARM-build-on-hardfloat-arches.patch
 
 # documentation
 BuildRequires:	ghostscript
@@ -78,6 +82,7 @@ BuildRequires:	git
 BuildRequires:	brlapi-devel
 BuildRequires:	bzip2-devel
 Buildrequires:	dev86-devel
+BuildRequires:	libaio-devel
 BuildRequires:	pkgconfig(sdl)
 BuildRequires:	pkgconfig(gtk+-2.0)
 BuildRequires:	pkgconfig(ext2fs)
@@ -94,7 +99,6 @@ BuildRequires:	pkgconfig(uuid)
 BuildRequires:	pkgconfig(x11)
 BuildRequires:	pkgconfig(yajl)
 BuildRequires:	pkgconfig(zlib)
-
 Requires:	bridge-utils
 #Requires:	glibc-xen
 Requires:	grub
@@ -147,13 +151,16 @@ The basic tools for managing XEN virtual machines.
  # xend state
 %{_localstatedir}/run/xend
 # init scripts
-%{_initrddir}/xend
-%{_initrddir}/xendomains
-%{_initrddir}/blktapctrl
-%{_initrddir}/xenstored
-%{_initrddir}/xenconsoled
-%{_initrddir}/xen-watchdog
-%{_initrddir}/xencommons
+%{_unitdir}/xend.service
+%{_unitdir}/xendomains.service
+%{_libexecdir}/xendomains
+%{_unitdir}/proc-xen.mount
+%{_unitdir}/var-lib-xenstored.mount
+%{_unitdir}/xenstored.service
+%{_unitdir}/oxenstored.service
+%{_unitdir}/blktapctrl.service
+%{_unitdir}/xenconsoled.service
+%{_unitdir}/xen-watchdog.service
 %{_sysconfdir}/sysconfig/modules/xen.modules
 %config(noreplace) %{_sysconfdir}/sysconfig/xendomains
 %config(noreplace) %{_sysconfdir}/sysconfig/blktapctrl
@@ -187,18 +194,12 @@ The basic tools for managing XEN virtual machines.
 %{_sbindir}/qcow2raw
 %{_sbindir}/tapdisk
 %{_sbindir}/xentrace_setmask
-%{_sbindir}/xsview
 %{_sbindir}/xenperf
 %{_sbindir}/xenpm
 %{_sbindir}/xenpmd
+%{_sbindir}/xen-mfndump
 %{_bindir}/xencov_split
 %{_sbindir}/xencov
-%{_sbindir}/flask-getenforce
-%{_sbindir}/flask-get-bool
-%{_sbindir}/flask-label-pci
-%{_sbindir}/flask-loadpolicy
-%{_sbindir}/flask-setenforce
-%{_sbindir}/flask-set-bool
 %{_sbindir}/gdbsx
 %{_sbindir}/gtracestat
 %{_sbindir}/gtraceview
@@ -345,7 +346,7 @@ This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
 
 %files -n %{libxenctrl}
-%{_libdir}/libxenctrl.so.%{maj43}*
+%{_libdir}/libxenctrl.so.%{maj44}*
 
 #----------------------------------------------------------------------------
 
@@ -359,7 +360,7 @@ This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
 
 %files -n %{libxenguest}
-%{_libdir}/libxenguest.so.%{maj43}*
+%{_libdir}/libxenguest.so.%{maj44}*
 
 #----------------------------------------------------------------------------
 
@@ -373,7 +374,7 @@ This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
 
 %files -n %{libxenlight}
-%{_libdir}/libxenlight.so.%{maj43}*
+%{_libdir}/libxenlight.so.%{maj44}*
 
 #----------------------------------------------------------------------------
 
@@ -505,7 +506,10 @@ sed -E -i 's/(as_fn_error \$\? "cannot find wget or ftp" "\$LINENO" 5)/as_fn_sta
         --localstatedir=%{_localstatedir} \
         --sharedstatedir=%{_sharedstatedir} \
         --mandir=%{_mandir} \
-        --infodir=%{_infodir}
+        --infodir=%{_infodir} \
+	--enable-blktap1 \
+	--enable-xend \
+	--with-system-qemu
 
 %make prefix=/usr dist-tools
 make  prefix=/usr dist-docs
@@ -568,16 +572,31 @@ install -d -m 755 %{buildroot}%{_localstatedir}/log/xen
 # install state directory
 install -d -m 755 %{buildroot}%{_localstatedir}/lib/xend/{domains,state,storage}
 
-install -m 755 %{SOURCE20} %{buildroot}%{_initrddir}/xenstored
-install -m 755 %{SOURCE21} %{buildroot}%{_initrddir}/xenconsoled
-install -m 755 %{SOURCE22} %{buildroot}%{_initrddir}/blktapctrl
-install -m 755 %{SOURCE23} %{buildroot}%{_initrddir}/xend
+# remove old init scripts
+rm %{buildroot}%{_sysconfdir}/rc.d/init.d/xen-watchdog
+rm %{buildroot}%{_sysconfdir}/rc.d/init.d/xencommons
+rm %{buildroot}%{_sysconfdir}/rc.d/init.d/xend
+rm %{buildroot}%{_sysconfdir}/rc.d/init.d/xendomains
 
 # sysconfig
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
 install -m 644 %{SOURCE30} %{buildroot}%{_sysconfdir}/sysconfig/xenstored
 install -m 644 %{SOURCE31} %{buildroot}%{_sysconfdir}/sysconfig/xenconsoled
 install -m 644 %{SOURCE32} %{buildroot}%{_sysconfdir}/sysconfig/blktapctrl
+
+mkdir -p %{buildroot}%{_unitdir}
+install -m 644 %{SOURCE40} %{buildroot}%{_unitdir}/proc-xen.mount
+install -m 644 %{SOURCE41} %{buildroot}%{_unitdir}/var-lib-xenstored.mount
+install -m 644 %{SOURCE42} %{buildroot}%{_unitdir}/xenstored.service
+install -m 644 %{SOURCE43} %{buildroot}%{_unitdir}/blktapctrl.service
+install -m 644 %{SOURCE44} %{buildroot}%{_unitdir}/xend.service
+install -m 644 %{SOURCE45} %{buildroot}%{_unitdir}/xenconsoled.service
+install -m 644 %{SOURCE46} %{buildroot}%{_unitdir}/xen-watchdog.service
+install -m 644 %{SOURCE47} %{buildroot}%{_unitdir}/xendomains.service
+mkdir -p %{buildroot}%{_libexecdir}
+install -m 755 %{SOURCE48} %{buildroot}%{_libexecdir}/xendomains
+mkdir -p %{buildroot}/usr/lib/tmpfiles.d
+install -m 644 %{SOURCE50} %{buildroot}%{_unitdir}/oxenstored.service
 
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig/modules
 install -m 755 %{SOURCE1} \
