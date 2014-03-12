@@ -1,15 +1,15 @@
 %define	major	0
 %define	maj10	1.0
-%define	maj43	2.0
 %define	maj30	3.0
-%define	maj43	4.3
+%define maj43	4.3
+%define	maj44	4.4
 %define	libblktap	%mklibname blktap %{maj30}
 %define	libblktapctl	%mklibname blktapctl %{maj10}
 %define	libbfsimage	%mklibname bfsimage %{maj10}
 %define	libvhd		%mklibname vhd %{maj10}
-%define	libxenctrl	%mklibname xenctrl %{maj43}
-%define	libxenguest	%mklibname xenguest %{maj43}
-%define	libxenlight	%mklibname xenlight %{maj43}
+%define	libxenctrl	%mklibname xenctrl %{maj44}
+%define	libxenguest	%mklibname xenguest %{maj44}
+%define	libxenlight	%mklibname xenlight %{maj44}
 %define	libxenstat	%mklibname xenstat %{major}
 %define	libxenstore	%mklibname xenstore %{maj30}
 %define	libxenvchan	%mklibname xenvchan %{maj10}
@@ -20,14 +20,13 @@
 
 Summary:	The basic tools for managing XEN virtual machines
 Name:		xen
-Version:	4.3.1
+Version:	4.4.0
 Release:	1
 License:	GPLv2+
 Group:		System/Kernel and hardware
 Url:		http://xen.org/
 Source0:	http://bits.xensource.com/oss-xen/release/%{version}/%{name}-%{version}.tar.gz
 Source1:	%{name}.modules
-Source2:	qemu-xen-4.0.0-rc4.tar.gz
 Source3:	http://xenbits.xen.org/xen-extfiles/libconfig-1.3.2.tar.gz
 # stubdoms
 Source10:	http://xenbits.xen.org/xen-extfiles/zlib-1.2.3.tar.gz
@@ -58,11 +57,8 @@ Patch3:		xen-4.2.1-fix-glibc-build.patch
 Patch4:		xencommons-fix-service.patch
 Patch5:		xen-4.2-ocaml-build.patch
 # fedora patches
-Patch13:	qemu-xen.tradonly.patch
 Patch14:	xen-4.2.1-fix-xg-build.patch
 Patch15:	xen.pygrubtitlefix.patch
-# security patches
-Patch1071:	0001-fix-ARM-build-on-hardfloat-arches.patch
 
 # documentation
 BuildRequires:	ghostscript
@@ -94,7 +90,6 @@ BuildRequires:	pkgconfig(uuid)
 BuildRequires:	pkgconfig(x11)
 BuildRequires:	pkgconfig(yajl)
 BuildRequires:	pkgconfig(zlib)
-
 Requires:	bridge-utils
 #Requires:	glibc-xen
 Requires:	grub
@@ -187,18 +182,12 @@ The basic tools for managing XEN virtual machines.
 %{_sbindir}/qcow2raw
 %{_sbindir}/tapdisk
 %{_sbindir}/xentrace_setmask
-%{_sbindir}/xsview
 %{_sbindir}/xenperf
 %{_sbindir}/xenpm
 %{_sbindir}/xenpmd
+%{_sbindir}/xen-mfndump
 %{_bindir}/xencov_split
 %{_sbindir}/xencov
-%{_sbindir}/flask-getenforce
-%{_sbindir}/flask-get-bool
-%{_sbindir}/flask-label-pci
-%{_sbindir}/flask-loadpolicy
-%{_sbindir}/flask-setenforce
-%{_sbindir}/flask-set-bool
 %{_sbindir}/gdbsx
 %{_sbindir}/gtracestat
 %{_sbindir}/gtraceview
@@ -345,7 +334,7 @@ This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
 
 %files -n %{libxenctrl}
-%{_libdir}/libxenctrl.so.%{maj43}*
+%{_libdir}/libxenctrl.so.%{maj44}*
 
 #----------------------------------------------------------------------------
 
@@ -359,7 +348,7 @@ This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
 
 %files -n %{libxenguest}
-%{_libdir}/libxenguest.so.%{maj43}*
+%{_libdir}/libxenguest.so.%{maj44}*
 
 #----------------------------------------------------------------------------
 
@@ -373,7 +362,7 @@ This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
 
 %files -n %{libxenlight}
-%{_libdir}/libxenlight.so.%{maj43}*
+%{_libdir}/libxenlight.so.%{maj44}*
 
 #----------------------------------------------------------------------------
 
@@ -505,7 +494,10 @@ sed -E -i 's/(as_fn_error \$\? "cannot find wget or ftp" "\$LINENO" 5)/as_fn_sta
         --localstatedir=%{_localstatedir} \
         --sharedstatedir=%{_sharedstatedir} \
         --mandir=%{_mandir} \
-        --infodir=%{_infodir}
+        --infodir=%{_infodir} \
+	--enable-blktap1 \
+	--enable-xend \
+	--with-system-qemu
 
 %make prefix=/usr dist-tools
 make  prefix=/usr dist-docs
