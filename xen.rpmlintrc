@@ -1,2 +1,3 @@
 # prebuilt images
 addFilter("E: unstripped-binary-or-object")
+addFilter("E: devel-file-in-non-devel-package")
