@@ -1,0 +1,11 @@
+--- xen-4.4.1/tools/libfsimage/common/Makefile.orig     2014-10-08 08:42:10.127258605 +0100
++++ xen-4.4.1/tools/libfsimage/common/Makefile  2014-10-08 08:41:02.633264152 +0100
+@@ -5,7 +5,7 @@
+ MINOR = 0
+
+ LDFLAGS-$(CONFIG_SunOS) = -Wl,-M -Wl,mapfile-SunOS
+-LDFLAGS-$(CONFIG_Linux) = -Wl,mapfile-GNU
++LDFLAGS-$(CONFIG_Linux) = -Wl,-T -Wl,mapfile-GNU
+ LDFLAGS = $(LDFLAGS-y)
+
+ CFLAGS += $(PTHREAD_CFLAGS)
