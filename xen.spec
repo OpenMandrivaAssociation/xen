@@ -20,7 +20,7 @@
 Summary:	The basic tools for managing XEN virtual machines
 Name:		xen
 Version:	4.4.1
-Release:	1
+Release:	2
 License:	GPLv2+
 Group:		System/Kernel and hardware
 Url:		http://xen.org/
@@ -90,7 +90,7 @@ BuildRequires:	gettext
 BuildRequires:	git
 BuildRequires:	brlapi-devel
 BuildRequires:	bzip2-devel
-Buildrequires:	dev86-devel
+BuildRequires:	dev86-devel
 BuildRequires:	libaio-devel
 BuildRequires:	pkgconfig(sdl)
 BuildRequires:	pkgconfig(gtk+-2.0)
@@ -116,7 +116,7 @@ Requires:	iptables
 Requires:	kmod
 Requires:	python
 Requires:	python-twisted-core
-Requires:	python-pyxml
+Requires:	python-lxml
 Requires:	xen-hypervisor = %{EVRD}
 
 %description
