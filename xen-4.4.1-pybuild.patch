@@ -4,16 +4,16 @@
  		$(XEN_ROOT)/tools/libxl/libxl_types.idl \
  		xen/lowlevel/xl/_pyxl_types.h \
  		xen/lowlevel/xl/_pyxl_types.c
--	CC="$(CC)" CFLAGS="$(CFLAGS)" $(PYTHON) setup.py build --xend=$(CONFIG_XEND)
-+	CC=clang CFLAGS= $(PYTHON) setup.py build --xend=$(CONFIG_XEND)
+-	CC="$(CC)" CFLAGS="$(CFLAGS) $(LDFLAGS) $(APPEND_LDFLAGS)" $(PYTHON) setup.py build
++	CC=clang CFLAGS= $(PYTHON) setup.py build
  
  .PHONY: install
- install: install-dtd
--	CC="$(CC)" CFLAGS="$(CFLAGS)" $(PYTHON) setup.py install \
+ install:
+-	CC="$(CC)" CFLAGS="$(CFLAGS) $(LDFLAGS) $(APPEND_LDFLAGS)" $(PYTHON) setup.py install \
 +	CC=clang CFLAGS= $(PYTHON) setup.py install \
- 		$(PYTHON_PREFIX_ARG) --root="$(DESTDIR)" --force --xend=$(CONFIG_XEND)
+ 		$(PYTHON_PREFIX_ARG) --root="$(DESTDIR)" --force
  
- 	$(INSTALL_DIR) $(DESTDIR)$(SBINDIR)
+ .PHONY: test
 --- xen-4.4.0/tools/python/setup.py.orig	2014-10-08 10:20:21.958128928 +0100
 +++ xen-4.4.0/tools/python/setup.py	2014-10-08 10:20:34.041128037 +0100
 @@ -4,7 +4,7 @@
@@ -31,16 +31,16 @@
  all: build
  .PHONY: build
  build:
--	CC="$(CC)" CFLAGS="$(CFLAGS)" $(PYTHON) setup.py build
+-	CC="$(CC)" CFLAGS="$(CFLAGS) $(APPEND_LDFLAGS)" $(PYTHON) setup.py build
 +	CC=clang CFLAGS= $(PYTHON) setup.py build
  
  .PHONY: install
  install: all
--	CC="$(CC)" CFLAGS="$(CFLAGS)" $(PYTHON) setup.py install \
+-	CC="$(CC)" CFLAGS="$(CFLAGS) $(APPEND_LDFLAGS)" $(PYTHON) setup.py install \
 +	CC=clang CFLAGS= $(PYTHON) setup.py install \
  		$(PYTHON_PREFIX_ARG) --root="$(DESTDIR)" \
- 		--install-scripts=$(PRIVATE_BINDIR) --force
- 	$(INSTALL_DIR) $(DESTDIR)/var/run/xend/boot
+ 		--install-scripts=$(LIBEXEC_BIN) --force
+ 	set -e; if [ $(BINDIR) != $(LIBEXEC_BIN) -a \
 --- xen-4.4.0/tools/pygrub/setup.py.orig	2014-10-08 10:33:27.274071071 +0100
 +++ xen-4.4.0/tools/pygrub/setup.py	2014-10-08 10:33:35.613070457 +0100
 @@ -3,7 +3,7 @@

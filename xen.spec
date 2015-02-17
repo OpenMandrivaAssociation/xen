@@ -2,13 +2,13 @@
 %define	maj10	1.0
 %define	maj30	3.0
 %define maj43	4.3
-%define	maj44	4.4
+%define	maj45	4.5
 %define	libblktapctl	%mklibname blktapctl %{maj10}
 %define	libbfsimage	%mklibname bfsimage %{maj10}
 %define	libvhd		%mklibname vhd %{maj10}
-%define	libxenctrl	%mklibname xenctrl %{maj44}
-%define	libxenguest	%mklibname xenguest %{maj44}
-%define	libxenlight	%mklibname xenlight %{maj44}
+%define	libxenctrl	%mklibname xenctrl %{maj45}
+%define	libxenguest	%mklibname xenguest %{maj45}
+%define	libxenlight	%mklibname xenlight %{maj45}
 %define	libxenstat	%mklibname xenstat %{major}
 %define	libxenstore	%mklibname xenstore %{maj30}
 %define	libxenvchan	%mklibname xenvchan %{maj10}
@@ -19,8 +19,8 @@
 
 Summary:	The basic tools for managing XEN virtual machines
 Name:		xen
-Version:	4.4.1
-Release:	3
+Version:	4.5.0
+Release:	1
 License:	GPLv2+
 Group:		System/Kernel and hardware
 Url:		http://xen.org/
@@ -47,7 +47,6 @@ Source34:	xen.rpmlintrc
 Source40:	proc-xen.mount
 Source41:	var-lib-xenstored.mount
 Source42:	xenstored.service
-Source44:	xend.service
 Source45:	xenconsoled.service
 Source46:	xen-watchdog.service
 Source47:	xendomains.service
@@ -66,16 +65,8 @@ Patch6:		xen-4.4.1-gold.patch
 # we need to allow the module to be built with clang
 Patch7:		xen-4.4.1-pybuild.patch
 %endif
-
+Patch8:		xen.ocaml.uint.fix.patch
 # fedora patches
-Patch14:	xen-4.2.1-fix-xg-build.patch
-
-# Upstream sec advisories
-Patch50:	xsa104.patch
-Patch51:	xsa105.patch
-Patch52:	xsa106.patch
-Patch53:	xsa107-4.4.patch
-Patch54:	xsa108.patch
 
 # documentation
 BuildRequires:	ghostscript
@@ -130,18 +121,12 @@ The basic tools for managing XEN virtual machines.
 %dir %{_sysconfdir}/xen
 %{_sysconfdir}/xen/scripts
 %{_sysconfdir}/xen/auto
-%config(noreplace) %{_sysconfdir}/xen/*.sxp
-%config(noreplace) %{_sysconfdir}/xen/*.xml
 %config(noreplace) %{_sysconfdir}/xen/xlexample*
-%config(noreplace) %{_sysconfdir}/xen/xmexample*
 %config(noreplace) %{_sysconfdir}/xen/cpupool
 %config(noreplace) %{_sysconfdir}/xen/xl.conf
 %config(noreplace) %{_sysconfdir}/xen/oxenstored.conf
 %{_mandir}/man*/*
-%{_libdir}/xen
-%if "%{_lib}" != "lib"
-%{_prefix}/lib/xen
-%endif
+%{_libexecdir}/xen
 %{_libdir}/fs
 %if %mdvver >= 201500
 %{py2_platsitedir}/xen
@@ -163,11 +148,7 @@ The basic tools for managing XEN virtual machines.
 %{_localstatedir}/lib/xend
 # xenstore state
 %{_localstatedir}/lib/xenstored
-%{_localstatedir}/run/xenstored
- # xend state
-%{_localstatedir}/run/xend
 # init scripts
-%{_unitdir}/xend.service
 %{_unitdir}/xendomains.service
 %{_libexecdir}/xendomains
 %{_unitdir}/proc-xen.mount
@@ -176,6 +157,11 @@ The basic tools for managing XEN virtual machines.
 %{_unitdir}/oxenstored.service
 %{_unitdir}/xenconsoled.service
 %{_unitdir}/xen-watchdog.service
+%{_unitdir}/xen-init-dom0.service
+%{_unitdir}/xen-qemu-dom0-disk-backend.service
+%{_unitdir}/xenstored.socket
+%{_unitdir}/xenstored_ro.socket
+/usr/lib/modules-load.d/xen.conf
 %{_sysconfdir}/sysconfig/modules/xen.modules
 %config(noreplace) %{_sysconfdir}/sysconfig/xendomains
 %config(noreplace) %{_sysconfdir}/sysconfig/xenstored
@@ -186,7 +172,6 @@ The basic tools for managing XEN virtual machines.
 %{_bindir}/pygrub
 %{_bindir}/qemu-img-xen
 %{_bindir}/qemu-nbd-xen
-%{_bindir}/remus
 %{_bindir}/xencons
 %{_bindir}/xentrace
 %{_bindir}/xentrace_format
@@ -195,8 +180,6 @@ The basic tools for managing XEN virtual machines.
 %{_bindir}/xen-detect
 %{_bindir}/xenstore
 %{_sbindir}/xenstored
-%{_sbindir}/xm
-%{_sbindir}/xend
 %{_sbindir}/xenconsoled
 %{_sbindir}/xentop
 %{_sbindir}/xen-bugtool
@@ -239,12 +222,10 @@ The basic tools for managing XEN virtual machines.
 %post
 %tmpfiles_create %{name}
 %_post_service xencommons
-%_post_service xend
 %_post_service xendomains
 
 %preun
 %_preun_service xencommons
-%_preun_service xend
 %_preun_service xendomains
 
 #----------------------------------------------------------------------------
@@ -344,7 +325,7 @@ This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
 
 %files -n %{libxenctrl}
-%{_libdir}/libxenctrl.so.%{maj44}*
+%{_libdir}/libxenctrl.so.%{maj45}*
 
 #----------------------------------------------------------------------------
 
@@ -358,7 +339,7 @@ This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
 
 %files -n %{libxenguest}
-%{_libdir}/libxenguest.so.%{maj44}*
+%{_libdir}/libxenguest.so.%{maj45}*
 
 #----------------------------------------------------------------------------
 
@@ -372,7 +353,7 @@ This package contains the libraries needed to run programs dynamically
 linked with Xen libraries.
 
 %files -n %{libxenlight}
-%{_libdir}/libxenlight.so.%{maj44}*
+%{_libdir}/libxenlight.so.%{maj45}*
 
 #----------------------------------------------------------------------------
 
@@ -506,8 +487,8 @@ sed -E -i 's/(as_fn_error \$\? "cannot find wget or ftp" "\$LINENO" 5)/as_fn_sta
         --sharedstatedir=%{_sharedstatedir} \
         --mandir=%{_mandir} \
         --infodir=%{_infodir} \
-	--enable-xend \
-	--with-system-qemu
+	--with-system-qemu \
+	--with-systemd=%{_unitdir}
 
 %make prefix=/usr dist-tools
 make  prefix=/usr dist-docs
@@ -574,7 +555,6 @@ install -d -m 755 %{buildroot}%{_localstatedir}/lib/xend/{domains,state,storage}
 # remove old init scripts
 rm %{buildroot}%{_sysconfdir}/rc.d/init.d/xen-watchdog
 rm %{buildroot}%{_sysconfdir}/rc.d/init.d/xencommons
-rm %{buildroot}%{_sysconfdir}/rc.d/init.d/xend
 rm %{buildroot}%{_sysconfdir}/rc.d/init.d/xendomains
 
 # sysconfig
@@ -586,7 +566,6 @@ mkdir -p %{buildroot}%{_unitdir}
 install -m 644 %{SOURCE40} %{buildroot}%{_unitdir}/proc-xen.mount
 install -m 644 %{SOURCE41} %{buildroot}%{_unitdir}/var-lib-xenstored.mount
 install -m 644 %{SOURCE42} %{buildroot}%{_unitdir}/xenstored.service
-install -m 644 %{SOURCE44} %{buildroot}%{_unitdir}/xend.service
 install -m 644 %{SOURCE45} %{buildroot}%{_unitdir}/xenconsoled.service
 install -m 644 %{SOURCE46} %{buildroot}%{_unitdir}/xen-watchdog.service
 install -m 644 %{SOURCE47} %{buildroot}%{_unitdir}/xendomains.service
@@ -607,11 +586,6 @@ install -D -p -m 0644 %{SOURCE33} %{buildroot}%{_tmpfilesdir}/%{name}.conf
 #mv %{buildroot}/etc/udev/rules.d/xen*.rules %{buildroot}/etc/udev/rules.d
 mkdir -p %{buildroot}%{_udevrulesdir}
 mv %{buildroot}%{_sysconfdir}/udev/rules.d/xen*.rules %{buildroot}%{_udevrulesdir}
-
-# quite some hardcoded paths inside scripts rely on this
-%if "%{_lib}" != "lib"
-mv %{buildroot}%{_libdir}/xen/bin/libxl-save-helper %{buildroot}%{_prefix}/lib/xen/bin/
-%endif
 
 # move ocaml stubs to correct dir
 mkdir -p %{buildroot}%{_libdir}/ocaml/stublibs/

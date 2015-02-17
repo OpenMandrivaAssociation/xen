@@ -1,0 +1,20 @@
+--- xen-4.5.0/tools/ocaml/libs/xb/xs_ring_stubs.c.orig	2015-01-12 16:53:24.000000000 +0000
++++ xen-4.5.0/tools/ocaml/libs/xb/xs_ring_stubs.c	2015-01-27 21:47:45.156813636 +0000
+@@ -55,7 +55,7 @@
+ 
+ 	cons = *(volatile uint32_t*)&intf->req_cons;
+ 	prod = *(volatile uint32_t*)&intf->req_prod;
+-	connection = *(volatile uint32*)&intf->connection;
++	connection = *(volatile uint32_t*)&intf->connection;
+ 
+ 	if (connection != XENSTORE_CONNECTED)
+ 		caml_raise_constant(*caml_named_value("Xb.Reconnect"));
+@@ -105,7 +105,7 @@
+ 
+ 	cons = *(volatile uint32_t*)&intf->rsp_cons;
+ 	prod = *(volatile uint32_t*)&intf->rsp_prod;
+-	connection = *(volatile uint32*)&intf->connection;
++	connection = *(volatile uint32_t*)&intf->connection;
+ 
+ 	if (connection != XENSTORE_CONNECTED)
+ 		caml_raise_constant(*caml_named_value("Xb.Reconnect"));
