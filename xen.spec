@@ -99,6 +99,7 @@ BuildRequires:	pkgconfig(uuid)
 BuildRequires:	pkgconfig(x11)
 BuildRequires:	pkgconfig(yajl)
 BuildRequires:	pkgconfig(zlib)
+BuildRequires:	pkgconfig(systemd)
 Requires:	bridge-utils
 #Requires:	glibc-xen
 Requires:	grub
