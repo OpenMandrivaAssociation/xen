@@ -21,7 +21,7 @@
 Summary:	The basic tools for managing XEN virtual machines
 Name:		xen
 Version:	4.4.2
-Release:	1
+Release:	2
 License:	GPLv2+
 Group:		System/Kernel and hardware
 Url:		http://xen.org/
@@ -66,6 +66,16 @@ Patch4:		xencommons-fix-service.patch
 Patch5:		xen-4.2-ocaml-build.patch
 # fedora patches
 Patch14:	xen-4.2.1-fix-xg-build.patch
+
+# Sec patches
+Patch31: CVE-2014-0150.patch
+Patch40: xsa125-4.4.patch
+Patch41: xsa126-qemuu.patch
+Patch42: xsa126-qemut.patch
+Patch43: xsa127-4.x.patch
+Patch44: xsa132.patch
+Patch45: xsa133-qemut.patch
+Patch46: xsa133-qemuu.patch
 
 # documentation
 BuildRequires:	ghostscript
