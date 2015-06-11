@@ -20,7 +20,7 @@
 Summary:	The basic tools for managing XEN virtual machines
 Name:		xen
 Version:	4.5.0
-Release:	1
+Release:	2
 License:	GPLv2+
 Group:		System/Kernel and hardware
 Url:		http://xen.org/
@@ -149,9 +149,10 @@ The basic tools for managing XEN virtual machines.
 %{_localstatedir}/lib/xend
 # xenstore state
 %{_localstatedir}/lib/xenstored
-# init scripts
-%{_unitdir}/xendomains.service
 %{_libexecdir}/xendomains
+# init scripts
+%{_presetdir}/86-xen.preset
+%{_unitdir}/xendomains.service
 %{_unitdir}/proc-xen.mount
 %{_unitdir}/var-lib-xenstored.mount
 %{_unitdir}/xenstored.service
@@ -219,15 +220,6 @@ The basic tools for managing XEN virtual machines.
 %{_sbindir}/xen-hptool
 %{_sbindir}/xen-hvmcrash
 %{_sbindir}/xl
-
-%post
-%tmpfiles_create %{name}
-%_post_service xencommons
-%_post_service xendomains
-
-%preun
-%_preun_service xencommons
-%_preun_service xendomains
 
 #----------------------------------------------------------------------------
 
@@ -581,6 +573,13 @@ install -m 755 %{SOURCE1} \
 
 # tmpfiles
 install -D -p -m 0644 %{SOURCE33} %{buildroot}%{_tmpfilesdir}/%{name}.conf
+
+# (tpg) enable service
+install -d %{buildroot}%{_presetdir}
+cat > %{buildroot}%{_presetdir}/86-xen.preset << EOF
+enable xencommons.service
+enable xendomains.service
+EOF
 
 # udev
 #rm -rf %{buildroot}/etc/udev/rules.d/xen*.rules
