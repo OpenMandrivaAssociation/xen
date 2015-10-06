@@ -163,11 +163,6 @@ The basic tools for managing XEN virtual machines.
 %{_unitdir}/oxenstored.service
 %{_unitdir}/xenconsoled.service
 %{_unitdir}/xen-watchdog.service
-%{_unitdir}/xen-init-dom0.service
-%{_unitdir}/xen-qemu-dom0-disk-backend.service
-%{_unitdir}/xenstored.socket
-%{_unitdir}/xenstored_ro.socket
-/usr/lib/modules-load.d/xen.conf
 %{_sysconfdir}/sysconfig/modules/xen.modules
 %config(noreplace) %{_sysconfdir}/sysconfig/xendomains
 %config(noreplace) %{_sysconfdir}/sysconfig/xenstored
