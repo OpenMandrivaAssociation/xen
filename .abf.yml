@@ -10,5 +10,5 @@ sources:
   pciutils-2.2.9.tar.bz2: 2871be0890f0406c7f86fa01646e23935fda789e
   polarssl-1.1.4-gpl.tgz: 3dd10bd1a8f7f58e0ef8c91cfa5ea7efd5d5f4bc
   tpm_emulator-0.7.4.tar.gz: ffa3aafcd833fdcd7483bbdb4ff862f30ffde579
-  xen-4.5.0.tar.gz: c4aab5fb366496ad1edc7fe0a935a0d604335637
+  xen-4.5.1.tar.gz: f10328ce63625a5a7bfa3af5899c4432a467c051
   zlib-1.2.3.tar.gz: 60faeaaf250642db5c0ea36cd6dcc9f99c8f3902

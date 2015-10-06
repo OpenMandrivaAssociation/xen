@@ -16,11 +16,12 @@
 %define	devname		%mklibname %{name} -d
 
 %define	_disable_ld_no_undefined 1
+%define _disable_lto 1
 
 Summary:	The basic tools for managing XEN virtual machines
 Name:		xen
-Version:	4.5.0
-Release:	5
+Version:	4.5.1
+Release:	1
 License:	GPLv2+
 Group:		System/Kernel and hardware
 Url:		http://xen.org/
