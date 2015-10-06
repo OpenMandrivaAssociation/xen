@@ -67,7 +67,8 @@ Patch6:		xen-4.4.1-gold.patch
 Patch7:		xen-4.4.1-pybuild.patch
 %endif
 Patch8:		xen.ocaml.uint.fix.patch
-# fedora patches
+# upstream patches
+Patch9:	xen-4.5.1-ipxe_build_fix.patch
 
 # documentation
 BuildRequires:	ghostscript
