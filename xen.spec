@@ -24,7 +24,7 @@ Version:	4.5.1
 Release:	5
 License:	GPLv2+
 Group:		System/Kernel and hardware
-Url:		http://xen.org/
+Url:		https://xen.org/
 Source0:	http://bits.xensource.com/oss-xen/release/%{version}/%{name}-%{version}.tar.gz
 Source1:	%{name}.modules
 Source3:	http://xenbits.xen.org/xen-extfiles/libconfig-1.3.2.tar.gz
