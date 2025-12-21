@@ -73,6 +73,11 @@ Patch9:	xen-4.5.1-ipxe_build_fix.patch
 Patch10:	qemu.trad.build.patch
 
 # documentation
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	ghostscript
 BuildRequires:	transfig
 BuildRequires:	texinfo
